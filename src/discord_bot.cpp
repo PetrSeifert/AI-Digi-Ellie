@@ -43,6 +43,11 @@ void DiscordBot::registerCommands() {
     shutdownCommand.default_member_permissions = 0;
     commands.push_back(shutdownCommand);
 
+    // Create the join voice command
+    dpp::slashcommand joinVoiceCommand("joinvoice", "Join your current voice channel", bot->me.id);
+    joinVoiceCommand.default_member_permissions = 0;
+    commands.push_back(joinVoiceCommand);
+
     size_t commandCount = commands.size();
 
     // Bulk register all commands globally
@@ -97,22 +102,22 @@ void DiscordBot::setupEvents() {
     bot->on_log([](const dpp::log_t& event) {
         switch (event.severity) {
             case dpp::ll_critical:
-                std::cout << "CRITICAL: ";
+                std::cout << "\033[1;31mCRITICAL: ";  // Bright Red
                 break;
             case dpp::ll_error:
-                std::cout << "ERROR: ";
+                std::cout << "\033[31mERROR: ";      // Red
                 break;
             case dpp::ll_warning:
-                std::cout << "WARNING: ";
+                std::cout << "\033[33mWARNING: ";    // Yellow
                 break;
             case dpp::ll_info:
-                std::cout << "INFO: ";
+                std::cout << "\033[32mINFO: ";       // Green
                 break;
             case dpp::ll_debug:
-                std::cout << "DEBUG: ";
+                std::cout << "\033[36mDEBUG: ";      // Cyan
                 break;
         }
-        std::cout << event.message << std::endl;
+        std::cout << event.message << "\033[0m" << std::endl;  // Reset color at end
     });
 }
 
@@ -124,6 +129,9 @@ void DiscordBot::handleSlashCommand(const dpp::slashcommand_t& event) {
     }
     else if (commandName == "shutdown") {
         shutdownCommand(event);
+    }
+    else if (commandName == "joinvoice") {
+        joinVoiceCommand(event);
     }
 }
 
@@ -141,6 +149,24 @@ void DiscordBot::shutdownCommand(const dpp::slashcommand_t& event) {
     event.edit_response(shutdownResponse, [this](const dpp::confirmation_callback_t& callback) {
         stop();
     });
+}
+
+void DiscordBot::joinVoiceCommand(const dpp::slashcommand_t& event) {
+    // Get the guild member who issued the command
+    auto guild_id = event.command.guild_id;
+    
+    dpp::guild* g = dpp::find_guild(guild_id);
+    if (!g) {
+        event.reply("Failed to find the guild!");
+        return;
+    }
+
+    if (!g->connect_member_voice(event.command.get_issuing_user().id)) {
+        event.reply("You need to be in a voice channel first!");
+        return;
+    }
+
+    event.reply("Joining your voice channel!");
 }
 
 void DiscordBot::handleMessage(const dpp::message_create_t& event) {

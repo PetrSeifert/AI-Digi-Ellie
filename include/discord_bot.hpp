@@ -20,6 +20,7 @@ private:
     void handleSlashCommand(const dpp::slashcommand_t& event);
     void clearCommand(const dpp::slashcommand_t& event);
     void shutdownCommand(const dpp::slashcommand_t& event);
+    void joinVoiceCommand(const dpp::slashcommand_t& event);
     
     std::unique_ptr<dpp::cluster> bot;
     bool is_running;
