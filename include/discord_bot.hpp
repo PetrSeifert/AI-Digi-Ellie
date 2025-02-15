@@ -2,6 +2,7 @@
 #include <dpp/dpp.h>
 #include <string>
 #include <memory>
+#include "config.hpp"
 
 class DiscordBot {
 public:
@@ -16,9 +17,10 @@ private:
     void setupEvents();
     void handleMessage(const dpp::message_create_t& event);
     void registerCommands();
+    void handleSlashCommand(const dpp::slashcommand_t& event);
+    void clearCommand(const dpp::slashcommand_t& event);
+    void shutdownCommand(const dpp::slashcommand_t& event);
     
     std::unique_ptr<dpp::cluster> bot;
     bool is_running;
-
-    const uint64_t DEFAULT_CHANNEL_ID = 829618675475939392;
 }; 

@@ -51,7 +51,7 @@ std::string runInference(const std::string& conversationJson) {
 
         // Prepare the request body
         json request_body = {
-            {"model", "mistral"},
+            {"model", config::MODEL_NAME},
             {"messages", messages},
             {"stream", false}
         };

@@ -19,7 +19,6 @@ DiscordBot::DiscordBot(const std::string& token) : is_running(false) {
     // Log startup
     std::cout << "Setting up events...\n";
     setupEvents();
-    registerCommands();
     std::cout << "Events setup completed.\n";
 }
 
@@ -29,6 +28,31 @@ DiscordBot::~DiscordBot() {
 
 void DiscordBot::registerCommands() {
     if (!bot) return;
+
+    std::cout << "Registering commands for application ID: " << bot->me.id << "\n";
+
+    std::vector<dpp::slashcommand> commands;
+
+    // Create the clear command
+    dpp::slashcommand clearCommand("clear", "Clear the conversation history", bot->me.id);
+    clearCommand.default_member_permissions = 0;
+    commands.push_back(clearCommand);
+    
+    // Create the shutdown command
+    dpp::slashcommand shutdownCommand("shutdown", "Shutdown the bot", bot->me.id);
+    shutdownCommand.default_member_permissions = 0;
+    commands.push_back(shutdownCommand);
+
+    size_t commandCount = commands.size();
+
+    // Bulk register all commands globally
+    bot->global_bulk_command_create(commands, [this, commandCount](const dpp::confirmation_callback_t& callback) {
+        if (callback.is_error()) {
+            std::cout << "Error registering commands: " << callback.get_error().message << "\n";
+        } else {
+            std::cout << "Successfully registered " << commandCount << " slash commands.\n";
+        }
+    });
 }
 
 void DiscordBot::setupEvents() {
@@ -46,12 +70,20 @@ void DiscordBot::setupEvents() {
         std::cout << "Bot ID: " << bot->me.id << "\n";
         std::cout << "=====================\n";
 
+        // Register commands after bot is ready
+        registerCommands();
+
         // Send boot message to Ellie
         std::string bootPrompt = buildPrompt("<Bootup>", "System");
         std::string bootResponse = runInference(bootPrompt);
 
         // Send to the default channel
-        bot->message_create(dpp::message(dpp::snowflake(DEFAULT_CHANNEL_ID), bootResponse));
+        bot->message_create(dpp::message(dpp::snowflake(config::DEFAULT_CHANNEL_ID), bootResponse));
+    });
+
+    // Handle slash commands
+    bot->on_slashcommand([this](const dpp::slashcommand_t& event) {
+        handleSlashCommand(event);
     });
 
     std::cout << "Setting up on_message_create event...\n";
@@ -84,6 +116,33 @@ void DiscordBot::setupEvents() {
     });
 }
 
+void DiscordBot::handleSlashCommand(const dpp::slashcommand_t& event) {
+    const std::string& commandName = event.command.get_command_name();
+    
+    if (commandName == "clear") {
+        clearCommand(event);
+    }
+    else if (commandName == "shutdown") {
+        shutdownCommand(event);
+    }
+}
+
+void DiscordBot::clearCommand(const dpp::slashcommand_t& event) {
+    clearHistory();
+    event.reply("Conversation history cleared.");
+}
+
+void DiscordBot::shutdownCommand(const dpp::slashcommand_t& event) {
+    event.reply("Shuting down...");
+    // Send shutdown message to Ellie
+    std::string shutdownPrompt = buildPrompt("<Shutdown>", "System");
+    std::string shutdownResponse = runInference(shutdownPrompt);
+    
+    event.edit_response(shutdownResponse, [this](const dpp::confirmation_callback_t& callback) {
+        stop();
+    });
+}
+
 void DiscordBot::handleMessage(const dpp::message_create_t& event) {
     // Ignore messages from bots (including ourselves)
     if (event.msg.author.is_bot()) {
@@ -106,24 +165,6 @@ void DiscordBot::handleMessage(const dpp::message_create_t& event) {
     }
     std::cout << std::dec << "\n";
     std::cout << "==============================\n";
-
-    // Special commands
-    // TODO: Rework into slash commands
-    if (userMessage == "/clear") {
-        clearHistory();
-        bot->message_create(dpp::message(event.msg.channel_id, "Conversation history cleared."));
-        return;
-    }
-    else if (userMessage == "/shutdown") {
-        // Send shutdown message to Ellie
-        std::string shutdownPrompt = buildPrompt("<Shutdown>", "System");
-        std::string shutdownResponse = runInference(shutdownPrompt);
-        bot->message_create(dpp::message(event.msg.channel_id, shutdownResponse), [this](const dpp::confirmation_callback_t& callback) {
-            stop();
-        });
-
-        return;
-    }
 
     // Build the prompt from the user's message
     std::string prompt = buildPrompt(userMessage, userName);
