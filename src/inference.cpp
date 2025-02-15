@@ -69,12 +69,12 @@ std::string runInference(const std::string& conversationJson) {
         // Parse the response
         json response_json = json::parse(response->body);
         
-        std::string assistantResponse;
+        std::string ellieResponse;
         if (response_json.contains("message")) {
-            assistantResponse = response_json["message"]["content"].get<std::string>();
+            ellieResponse = response_json["message"]["content"].get<std::string>();
             // Add the assistant's response to the conversation history
-            addAssistantResponse(assistantResponse);
-            return assistantResponse;
+            addEllieResponse(ellieResponse);
+            return ellieResponse;
         } else {
             return "[Error: Unexpected response format]";
         }

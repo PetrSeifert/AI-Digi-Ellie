@@ -4,5 +4,5 @@
 
 void initializeConversation();
 std::string buildPrompt(const std::string& userInput, const std::string& userName);
-void addAssistantResponse(const std::string& response);
+void addEllieResponse(const std::string& response);
 void clearHistory();

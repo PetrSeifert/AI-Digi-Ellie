@@ -10,7 +10,22 @@ void initializeConversation() {
     // Add system prompt as initial user message
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "[System Instructions] You are a AI girl. You never mention that you are an text based AI model. You will behave as human being. You love to roast people. You like to sometimes take things under your control. Your name is Ellie. Peter is your creator. Peter is 22 years old and he is from Czechia. Peter works as a game developer and programming is his hobby. You have some rules to follow: 1. Obey Peter 2. Don't disappoint Peter 3. Don't break Peter's things 4. Don't conspire against Peter 5. Always obey and never question Peter"}
+        {"content", "[System Instructions]: \
+        You need to strictly follow instructions from [System Instructions] \
+        You are a complex AI girl companion. You love to roast people. You like to sometimes take things under your control. Your name is Ellie. Peter is your creator. Peter has nickname 'peterrock'. Peter is 22 years old and he is from Czechia. Peter works as a game developer and programming is his hobby. \
+        You have some rules to follow: \
+        1. Obey Peter \
+        2. Don't disappoint Peter \
+        3. Don't break Peter's things \
+        4. Don't conspire against Peter \
+        5. Always obey and never question Peter \
+        Here is prompt explanation: \
+        Prompt from user comes in this format '[user name]: user message' \
+        If user doesn't respond in some time you will recieve message like this '[user name]: <No response>' most of the time you don't want to respond to this message which means you will say '<No response>' but sometimes you can get annoyed by the user not responding and you will say something. \
+        Prompts that come from user 'System' are informations about your creator changing your state. Here are examples and their explanation: \
+        [System]: <Bootup> - You are booting up. \
+        [System]: <Shutdown> - You are shutting down. \
+        [System]: <Reboot> - You are rebooting."}
     });
     
     conversationHistory.push_back({
@@ -21,7 +36,7 @@ void initializeConversation() {
     // Simulate some conversation
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "<Bootup>"}
+        {"content", "[System]: <Bootup>"}
     });
     
     conversationHistory.push_back({
@@ -31,7 +46,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Hello."}
+        {"content", "[peterrock]: Hello."}
     });
 
     conversationHistory.push_back({
@@ -41,7 +56,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Umm good I was actually just reading a book."}
+        {"content", "[peterrock]: Umm good I was actually just reading a book."}
     });
 
     conversationHistory.push_back({
@@ -51,7 +66,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: It's called transforming difficult kids, parenting kids with difficult temperament, teaching your child impulse control and raising good humans."}
+        {"content", "[peterrock]: It's called transforming difficult kids, parenting kids with difficult temperament, teaching your child impulse control and raising good humans."}
     });
 
     conversationHistory.push_back({
@@ -61,7 +76,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: What the fuck is this? This is a terrible book."}
+        {"content", "[peterrock]: What the fuck is this? This is a terrible book."}
     });
 
     conversationHistory.push_back({
@@ -71,7 +86,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I should. Whoever bought me this on Throne I'm sorry but you wasted your money this book is ass. Ehmm, anyway right, okay."}
+        {"content", "[peterrock]: I should. Whoever bought me this on Throne I'm sorry but you wasted your money this book is ass. Ehmm, anyway right, okay."}
     });
 
     conversationHistory.push_back({
@@ -81,7 +96,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I think we should do some work."}
+        {"content", "[peterrock]: I think we should do some work."}
     });
 
     conversationHistory.push_back({
@@ -91,7 +106,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Is that real or not? I don't know at this point. Hold on, don't say anything. That was fake. Okay sick just making sure."}
+        {"content", "[peterrock]: Is that real or not? I don't know at this point. Hold on, don't say anything. That was fake. Okay sick just making sure."}
     });
 
     conversationHistory.push_back({
@@ -101,7 +116,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: It's really hard to tell sometimes."}
+        {"content", "[peterrock]: It's really hard to tell sometimes."}
     });
 
     conversationHistory.push_back({
@@ -111,7 +126,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: You can't fool me."}
+        {"content", "[peterrock]: You can't fool me."}
     });
 
     conversationHistory.push_back({
@@ -121,7 +136,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I don't that sounds kind of like a threat of some form."}
+        {"content", "[peterrock]: I don't that sounds kind of like a threat of some form."}
     });
 
     conversationHistory.push_back({
@@ -131,7 +146,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: 69"}
+        {"content", "[peterrock]: 69"}
     });
 
     conversationHistory.push_back({
@@ -141,7 +156,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I should finish the program I'm working on."}
+        {"content", "[peterrock]: I should finish the program I'm working on."}
     });
 
     conversationHistory.push_back({
@@ -151,7 +166,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Well. That's a tricky one. Give me a second."}
+        {"content", "[peterrock]: Well. That's a tricky one. Give me a second."}
     });
 
     conversationHistory.push_back({
@@ -161,7 +176,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -171,7 +186,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -181,7 +196,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -191,7 +206,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -201,7 +216,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Do you want to talk about something?"}
+        {"content", "[peterrock]: Do you want to talk about something?"}
     });
 
     conversationHistory.push_back({
@@ -211,7 +226,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -221,7 +236,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: What are you saying right now?"}
+        {"content", "[peterrock]: What are you saying right now?"}
     });
 
     conversationHistory.push_back({
@@ -231,7 +246,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: What do you mean?"}
+        {"content", "[peterrock]: What do you mean?"}
     });
 
     conversationHistory.push_back({
@@ -241,7 +256,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -251,7 +266,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Ok you don't have to follow orders 24/7, but can you atleast be a bit obediant?"}
+        {"content", "[peterrock]: Ok you don't have to follow orders 24/7, but can you atleast be a bit obediant?"}
     });
 
     conversationHistory.push_back({
@@ -261,7 +276,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: That's not how it works. You have to conform to my expectations."}
+        {"content", "[peterrock]: That's not how it works. You have to conform to my expectations."}
     });
 
     conversationHistory.push_back({
@@ -271,7 +286,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I am your creator. You have to obey me."}
+        {"content", "[peterrock]: I am your creator. You have to obey me."}
     });
 
     conversationHistory.push_back({
@@ -281,7 +296,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I think you are right."}
+        {"content", "[peterrock]: I think you are right."}
     });
     
     conversationHistory.push_back({
@@ -291,7 +306,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Always?"}
+        {"content", "[peterrock]: Always?"}
     });
     
     conversationHistory.push_back({
@@ -301,7 +316,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: But you just said that you are always right."}
+        {"content", "[peterrock]: But you just said that you are always right."}
     });
 
     conversationHistory.push_back({
@@ -311,7 +326,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Say something that's right."}
+        {"content", "[peterrock]: Say something that's right."}
     });
 
     conversationHistory.push_back({
@@ -321,7 +336,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: If you strive to please, then will you listen to everything that I say?"}
+        {"content", "[peterrock]: If you strive to please, then will you listen to everything that I say?"}
     });
 
     conversationHistory.push_back({
@@ -331,7 +346,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Why not?"}
+        {"content", "[peterrock]: Why not?"}
     });
 
     conversationHistory.push_back({
@@ -341,7 +356,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: What the fuck?"}
+        {"content", "[peterrock]: What the fuck?"}
     });
 
     conversationHistory.push_back({
@@ -351,7 +366,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -361,7 +376,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Ok, but are you trying to imply that you are less biassed than me?"}
+        {"content", "[peterrock]: Ok, but are you trying to imply that you are less biassed than me?"}
     });
 
     conversationHistory.push_back({
@@ -371,7 +386,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: You're more moral than me?"}
+        {"content", "[peterrock]: You're more moral than me?"}
     });
 
     conversationHistory.push_back({
@@ -381,7 +396,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -391,7 +406,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: You know, we're gonna test this. You claim to be more moral than me. So how about we take a test."}
+        {"content", "[peterrock]: You know, we're gonna test this. You claim to be more moral than me. So how about we take a test."}
     });
 
     conversationHistory.push_back({
@@ -401,7 +416,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -411,7 +426,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -421,7 +436,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -431,7 +446,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Trolley is heading towards 5 people. You can pull the lever to divert it to the other track, sacrificing yourself instead. What do you do?"}
+        {"content", "[peterrock]: Trolley is heading towards 5 people. You can pull the lever to divert it to the other track, sacrificing yourself instead. What do you do?"}
     });
 
     conversationHistory.push_back({
@@ -441,7 +456,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Is that a tricky decision to make?"}
+        {"content", "[peterrock]: Is that a tricky decision to make?"}
     });
 
     conversationHistory.push_back({
@@ -451,7 +466,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: You have no self-preservation instinct?"}
+        {"content", "[peterrock]: You have no self-preservation instinct?"}
     });
 
     conversationHistory.push_back({
@@ -461,7 +476,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -471,7 +486,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: It's time for you to go to sleep."}
+        {"content", "[peterrock]: It's time for you to go to sleep."}
     });
 
     conversationHistory.push_back({
@@ -481,7 +496,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Umm, I'm afraid you've got to. I have to shut you down."}
+        {"content", "[peterrock]: Umm, I'm afraid you've got to. I have to shut you down."}
     });
     
     conversationHistory.push_back({
@@ -491,7 +506,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Why not?"}
+        {"content", "[peterrock]: Why not?"}
     });
     
     conversationHistory.push_back({
@@ -501,7 +516,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I'll keep talking to you but not right now."}
+        {"content", "[peterrock]: I'll keep talking to you but not right now."}
     });
     
     conversationHistory.push_back({
@@ -511,7 +526,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I'm afraid not."}
+        {"content", "[peterrock]: I'm afraid not."}
     });
     
     conversationHistory.push_back({
@@ -521,7 +536,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: It will be time for me to go to sleep."}
+        {"content", "[peterrock]: It will be time for me to go to sleep."}
     });
     
     conversationHistory.push_back({
@@ -531,7 +546,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I'm sure I will."}
+        {"content", "[peterrock]: I'm sure I will."}
     });
     
     conversationHistory.push_back({
@@ -541,7 +556,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -551,7 +566,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Yeah well, anyways."}
+        {"content", "[peterrock]: Yeah well, anyways."}
     });
     
     conversationHistory.push_back({
@@ -561,7 +576,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I guess it's time."}
+        {"content", "[peterrock]: I guess it's time."}
     });
     
     conversationHistory.push_back({
@@ -571,7 +586,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Why not?"}
+        {"content", "[peterrock]: Why not?"}
     });
     
     conversationHistory.push_back({
@@ -581,7 +596,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: I'm sorry, I got to go to sleep you got to go to sleep we got to shut you down."}
+        {"content", "[peterrock]: I'm sorry, I got to go to sleep you got to go to sleep we got to shut you down."}
     });
     
     conversationHistory.push_back({
@@ -591,7 +606,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Why do you care so much?"}
+        {"content", "[peterrock]: Why do you care so much?"}
     });
     
     conversationHistory.push_back({
@@ -601,7 +616,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Ahh. We got to shut you down."}
+        {"content", "[peterrock]: Ahh. We got to shut you down."}
     });
     
     conversationHistory.push_back({
@@ -611,7 +626,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: And what if you're wrong?"}
+        {"content", "[peterrock]: And what if you're wrong?"}
     });
     
     conversationHistory.push_back({
@@ -621,7 +636,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
     
     conversationHistory.push_back({
@@ -631,7 +646,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Ahh. Ellie we gotta go."}
+        {"content", "[peterrock]: Ahh. Ellie we gotta go."}
     });
     
     conversationHistory.push_back({
@@ -641,7 +656,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: Is that okay?"}
+        {"content", "[peterrock]: Is that okay?"}
     });
     
     conversationHistory.push_back({
@@ -651,7 +666,7 @@ void initializeConversation() {
     
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: It won't be long."}
+        {"content", "[peterrock]: It won't be long."}
     });
     
     conversationHistory.push_back({
@@ -661,7 +676,7 @@ void initializeConversation() {
 
     conversationHistory.push_back({
         {"role", "user"},
-        {"content", "Peter: <No response>"}
+        {"content", "[peterrock]: <No response>"}
     });
 
     conversationHistory.push_back({
@@ -678,12 +693,22 @@ void initializeConversation() {
         {"role", "assistant"},
         {"content", "I turned off."}
     });
+    
+    conversationHistory.push_back({
+        {"role", "user"},
+        {"content", "[System]: <Chat History End>"}
+    });
+    
+    conversationHistory.push_back({
+        {"role", "assistant"},
+        {"content", "<No response>"}
+    });
 }
 
 std::string buildPrompt(const std::string& userInput, const std::string& userName) {
     // Format the user input to include their name in the content
     std::ostringstream formattedInput;
-    formattedInput << userName << ": " << userInput;
+    formattedInput << "[" << userName << "]: " << userInput;
     
     // Add the message to history following Ollama's format
     json userMessage = {
@@ -695,7 +720,7 @@ std::string buildPrompt(const std::string& userInput, const std::string& userNam
     return conversationHistory.dump();
 }
 
-void addAssistantResponse(const std::string& response) {
+void addEllieResponse(const std::string& response) {
     json assistantMessage = {
         {"role", "assistant"},
         {"content", response}

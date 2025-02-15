@@ -1,23 +1,22 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <thread>
+#include <chrono>
 #include "inference.hpp"
 #include "conversation.hpp"
 #include "system_control.hpp"
+#include "discord_bot.hpp"
 
-int main() {
-    if (!initializeModel()) {
-        std::cerr << "Error: Failed to load the model.\n";
-        return 1;
-    }
-
-    std::cout << "AI Assistant Ellie started. Type 'exit' to quit.\n";
+// Function to handle console interaction
+void runConsoleMode() {
+    std::cout << "Digi-Ellie started. Type '/exit' to quit.\n";
     std::cout << "Please enter your name: ";
     std::string userName;
     std::getline(std::cin, userName);
     if (userName.empty()) userName = "User";
 
-    std::string bootPrompt = buildPrompt("<Bootup>", "");
+    std::string bootPrompt = buildPrompt("<Bootup>", "System");
     std::string initialResponse = runInference(bootPrompt);
     std::cout << "Ellie: " << initialResponse << std::endl;
     std::cout << "Ellie: Hello " << userName << "!\n";
@@ -30,10 +29,9 @@ int main() {
         }
 
         if (userInput == "/exit") {
-            std::string exitPrompt = buildPrompt("<Shutdown>", "");
-            
-            std::string aiResponse = runInference(exitPrompt);
-            std::cout << "Ellie: " << aiResponse << std::endl;
+            std::string exitPrompt = buildPrompt("<Shutdown>", "System");
+            std::string ellieResponse = runInference(exitPrompt);
+            std::cout << "Ellie: " << ellieResponse << std::endl;
             break;
         }
 
@@ -44,14 +42,41 @@ int main() {
         }
 
         std::string prompt = buildPrompt(userInput, userName);
-        
-        std::string aiResponse = runInference(prompt);
+        std::string ellieResponse = runInference(prompt);
 
-        if (isSystemCommand(aiResponse)) {
-            handleSystemCommand(aiResponse);
+        if (isSystemCommand(ellieResponse)) {
+            handleSystemCommand(ellieResponse);
         } else {
-            std::cout << "Ellie: " << aiResponse << std::endl;
+            std::cout << "Ellie: " << ellieResponse << std::endl;
         }
+    }
+}
+
+int main(int argc, char* argv[]) {
+    if (!initializeModel()) {
+        std::cerr << "Error: Failed to load the model.\n";
+        return 1;
+    }
+
+    // Check if Discord token is provided and select mode
+    if (argc > 1) {
+        std::string discordToken = argv[1];
+        std::cout << "Starting in Discord mode...\n";
+        
+        try {
+            DiscordBot bot(discordToken);
+            bot.start();
+                 
+            std::cout << "Bot has stopped, shutting down...\n";
+            shutdownModel();
+            return 0;
+        } catch (const std::exception& e) {
+            std::cerr << "Discord bot error: " << e.what() << std::endl;
+            return 1;
+        }
+    } else {
+        std::cout << "Discord token not provided, starting in console mode...\n";
+        runConsoleMode();
     }
 
     shutdownModel();
