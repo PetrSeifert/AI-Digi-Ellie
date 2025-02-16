@@ -2,6 +2,7 @@
 #include <dpp/dpp.h>
 #include <string>
 #include <memory>
+#include <unordered_map>
 #include "config.hpp"
 #include "azure_tts.hpp"
 
@@ -19,11 +20,9 @@ private:
     std::unique_ptr<dpp::cluster> bot;
     std::unique_ptr<AzureTTS> tts;
     bool voice_connected;
-    dpp::snowflake current_voice_channel;
 
-    std::vector<uint8_t> recording_buffer;
+    std::unordered_map<dpp::snowflake, std::vector<uint8_t>> recording_buffers;
     bool is_recording;
-    dpp::snowflake recording_user_id;
 
     void setupEvents();
     void handleMessage(const dpp::message_create_t& event);
