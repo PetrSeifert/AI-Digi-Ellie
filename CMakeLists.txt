@@ -18,7 +18,6 @@ set(SOURCES
     src/discord_bot/core.cpp
     src/discord_bot/voice.cpp
     src/discord_bot/commands.cpp
-    src/discord_bot/tts.cpp
     src/discord_bot/message.cpp
     src/azure_tts.cpp
     src/azure_stt.cpp

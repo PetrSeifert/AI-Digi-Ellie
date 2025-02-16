@@ -40,7 +40,6 @@ namespace discord {
         }());
         LOG_INFO("==============================");
 
-        // Build the prompt from the user's message
         std::string prompt = buildPrompt(userMessage, userName);
         
         // Debug output for prompt
@@ -58,12 +57,6 @@ namespace discord {
 
         // Check if the response is not empty
         if (!ellieResponse.empty()) {
-            // Notify all response callbacks
-            for (const auto& callback : response_callbacks) {
-                callback(ellieResponse, event.msg.guild_id);
-            }
-
-            // Send the response back to Discord
             sendMessage(event.msg.channel_id, ellieResponse);
         } else {
             LOG_ERROR("Ellie did not respond to the message.");

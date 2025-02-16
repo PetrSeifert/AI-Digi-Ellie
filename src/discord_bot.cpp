@@ -22,25 +22,11 @@ void DiscordBot::initializeModules() {
     // Create commands module first since other modules need it
     commands = std::make_shared<discord::CommandsModule>(core);
     
-    // Create voice module
-    voice = std::make_shared<discord::VoiceModule>(core, commands);
-    
-    // Create TTS module if Azure key is provided
-    if (!config::AZURE_SPEECH_KEY.empty()) {
-        tts = std::make_shared<discord::TTSModule>(core, config::AZURE_SPEECH_KEY, config::AZURE_SPEECH_REGION);
-    }
-    
     // Create message module
     message = std::make_shared<discord::MessageModule>(core);
     
-    // Wire up event connections
-    if (tts && voice) {
-        message->onResponse([this](const std::string& response, dpp::snowflake guild_id) {
-            if (tts->isEnabled() && voice->isVoiceConnected()) {
-                tts->speakText(response, guild_id);
-            }
-        });
-    }
+    // Create voice module
+    voice = std::make_shared<discord::VoiceModule>(core, commands);
     
     // Register all commands after all modules are initialized
     commands->registerCommands();

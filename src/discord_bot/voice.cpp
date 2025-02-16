@@ -1,13 +1,16 @@
 #include "discord_bot/voice.hpp"
 #include "logging.hpp"
 #include "config.hpp"
+#include "inference.hpp"
+#include "conversation.hpp"
 #include <thread>
 #include <chrono>
 
 namespace discord {
 
     VoiceModule::VoiceModule(std::shared_ptr<CoreBot> core, std::shared_ptr<CommandsModule> commands) 
-        : core(core), commands(commands), voice_connected(false), is_recording(false) {
+        : core(core), commands(commands), voice_connected(false), is_recording(false),
+          should_stop_silence_detection(true) {
         
         // Initialize Azure STT if key is provided
         if (!config::AZURE_SPEECH_KEY.empty()) {
@@ -16,21 +19,171 @@ namespace discord {
         } else {
             LOG_WARN("STT module initialized without Azure credentials - STT functionality will be disabled");
         }
+
+        // Initialize Azure TTS if key is provided
+        if (!config::AZURE_SPEECH_KEY.empty()) {
+            tts = std::make_unique<AzureTTS>(config::AZURE_SPEECH_KEY, config::AZURE_SPEECH_REGION);
+            LOG_INFO("TTS module initialized with Azure credentials");
+        } else {
+            LOG_WARN("TTS module initialized without Azure credentials - TTS functionality will be disabled");
+        }
         
         // Set up voice receive handler
         core->getBot()->on_voice_receive([this](const dpp::voice_receive_t& event) {
-            if (is_recording) {
-                auto& buffer = recording_buffers[event.user_id];
-                size_t current_size = buffer.size();
-                buffer.resize(current_size + event.audio_size);
-                std::memcpy(buffer.data() + current_size, event.audio, event.audio_size);
-                
-                LOG_DEBUG("Recorded {} bytes of audio from user {} (total: {} bytes)", 
-                        event.audio_size, event.user_id, buffer.size());
+            if (voice_connected) {
+                std::lock_guard<std::mutex> lock(audio_states_mutex);
+                processAudioChunk(event.user_id, event.audio, event.audio_size);
             }
         });
 
         registerCommands();
+    }
+
+    VoiceModule::~VoiceModule() {
+        stopSilenceDetectionTimer();
+    }
+
+    void VoiceModule::startSilenceDetectionTimer() {
+        should_stop_silence_detection = false;
+        silence_detection_thread = std::thread(&VoiceModule::silenceDetectionLoop, this);
+        LOG_INFO("Started silence detection timer");
+    }
+
+    void VoiceModule::stopSilenceDetectionTimer() {
+        should_stop_silence_detection = true;
+        if (silence_detection_thread.joinable()) {
+            silence_detection_thread.join();
+        }
+        LOG_INFO("Stopped silence detection timer");
+    }
+
+    void VoiceModule::silenceDetectionLoop() {
+        while (!should_stop_silence_detection) {
+            {
+                std::lock_guard<std::mutex> lock(audio_states_mutex);
+                for (const auto& [user_id, _] : user_audio_states) {
+                    checkForSilenceAndTranscribe(user_id);
+                }
+            }
+            std::this_thread::sleep_for(SILENCE_CHECK_INTERVAL);
+        }
+    }
+
+    void VoiceModule::processAudioChunk(dpp::snowflake user_id, const uint8_t* audio, size_t audio_size) {
+        auto& state = user_audio_states[user_id];
+        auto now = std::chrono::steady_clock::now();
+
+        // If we haven't received audio for this user before, initialize their state
+        if (state.current_buffer.empty()) {
+            state.last_audio_time = now;
+            state.is_speaking = false;
+        }
+
+        // Check if this is a new speech segment
+        if (!state.is_speaking && audio_size > 0) {
+            state.is_speaking = true;
+            state.current_buffer.clear();
+            LOG_DEBUG("User {} started speaking", user_id);
+        }
+
+        // Add audio to buffer if we're recording or the user is speaking
+        if (is_recording || state.is_speaking) {
+            size_t current_size = state.current_buffer.size();
+            state.current_buffer.resize(current_size + audio_size);
+            std::memcpy(state.current_buffer.data() + current_size, audio, audio_size);
+            state.last_audio_time = now;
+            
+            LOG_DEBUG("Recorded {} bytes of audio from user {} (total: {} bytes)", 
+                    audio_size, user_id, state.current_buffer.size());
+        }
+    }
+
+    void VoiceModule::sendVoiceMessage(dpp::snowflake user_id, const std::string& message, dpp::snowflake guild_id) {
+        dpp::guild* g = dpp::find_guild(guild_id);
+        dpp::user* u = dpp::find_user(user_id);
+        std::string username = u->username;
+
+        std::string prompt = buildPrompt(message, username);
+        
+        // Debug output for prompt
+        LOG_DEBUG("=== Generated Prompt ===");
+        LOG_DEBUG("{}", prompt);
+        LOG_DEBUG("=====================");
+
+        // Get Ellie's response
+        std::string ellieResponse = runInference(prompt);
+
+        // Debug output for response
+        LOG_INFO("=== Ellie's Response ===");
+        LOG_INFO("{}", ellieResponse);
+        LOG_INFO("==================");
+
+        // Check if the response is not empty
+        if (!ellieResponse.empty()) {
+            speakText(ellieResponse, guild_id);
+        } else {
+            LOG_ERROR("Ellie did not respond to the message.");
+        }
+    }
+
+    void VoiceModule::checkForSilenceAndTranscribe(dpp::snowflake user_id) {
+        auto& state = user_audio_states[user_id];
+        auto now = std::chrono::steady_clock::now();
+        auto silence_duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now - state.last_audio_time
+        );
+
+        // If we've detected silence and have enough audio data
+        if (state.is_speaking && 
+            silence_duration > SILENCE_THRESHOLD && 
+            state.current_buffer.size() >= MIN_AUDIO_SIZE) {
+            
+            state.is_speaking = false;
+            LOG_INFO("Detected silence for user {}, transcribing {} bytes", 
+                    user_id, state.current_buffer.size());
+
+            try {
+                if (stt) {
+                    // Convert raw PCM to WAV format
+                    std::vector<uint8_t> wav_data = convertToWav(state.current_buffer);
+                    
+                    // Send to Azure STT
+                    std::string transcribed_text = stt->audioToText(wav_data);
+
+                    if (!transcribed_text.empty()) {
+                        // Send the transcribed text to Ellie
+                        sendVoiceMessage(user_id, transcribed_text, state.guild_id);
+                    }
+                    LOG_INFO("Transcription for user {}: {}", user_id, transcribed_text);
+                }
+            } catch (const std::exception& e) {
+                LOG_ERROR("Failed to transcribe audio for user {}: {}", user_id, e.what());
+            }
+
+            // Clear the buffer after transcription
+            state.current_buffer.clear();
+        }
+    }
+    
+    void VoiceModule::speakText(const std::string& text, dpp::snowflake guild_id) {
+        if (!tts) {
+            LOG_WARN("TTS not initialized - missing Azure key");
+            return;
+        }
+
+        try {
+            // Convert text to speech
+            std::vector<uint8_t> audio_data = tts->textToSpeech(text, config::AZURE_SPEECH_VOICE);
+            
+            // Get voice connection for the guild
+            if (auto vconn = core->getBot()->get_shard(0)->get_voice(guild_id)) {
+                // Convert audio format and send
+                std::vector<uint16_t> stereo_data = VoiceModule::convertTTSAudioFormat(audio_data);
+                vconn->voiceclient->send_audio_raw(stereo_data.data(), stereo_data.size() * sizeof(uint16_t));
+            }
+        } catch (const std::exception& e) {
+            LOG_ERROR("Error in TTS: {}", e.what());
+        }
     }
 
     void VoiceModule::registerCommands() {
@@ -41,18 +194,6 @@ namespace discord {
         joinVoiceCommand.default_member_permissions = 0;
         commands->addCommand(std::move(joinVoiceCommand));
         commands->addCommandHandler("joinvoice", [this](const auto& event) { handleJoinVoiceCommand(event); });
-
-        // Create the record command
-        dpp::slashcommand recordCommand("record", "Start recording a user's voice", bot->me.id);
-        recordCommand.default_member_permissions = 0;
-        commands->addCommand(std::move(recordCommand));
-        commands->addCommandHandler("record", [this](const auto& event) { handleRecordCommand(event); });
-
-        // Create the stop recording command
-        dpp::slashcommand stopRecordCommand("stoprecord", "Stop recording voice", bot->me.id);
-        stopRecordCommand.default_member_permissions = 0;
-        commands->addCommand(std::move(stopRecordCommand));
-        commands->addCommandHandler("stoprecord", [this](const auto& event) { handleStopRecordCommand(event); });
     }
 
     void VoiceModule::handleJoinVoiceCommand(const dpp::slashcommand_t& event) {
@@ -70,48 +211,23 @@ namespace discord {
         }
 
         voice_connected = true;
-        event.reply("Joined your voice channel!");
-    }
-
-    void VoiceModule::handleRecordCommand(const dpp::slashcommand_t& event) {
-        if (is_recording) {
-            event.reply("Already recording! Stop the current recording first.");
-            return;
-        }
-
-        dpp::guild* g = dpp::find_guild(event.command.guild_id);
-        if (!g) {
-            event.reply("Failed to find the guild!");
-            return;
-        }
-
-        if (!voice_connected) {
-            event.reply("Bot needs to be in a voice channel first! Use /joinvoice");
-            return;
-        }
-
-        recording_buffers.clear();
         
-        std::vector<dpp::snowflake> users_in_channel;
-        for (const auto& [user_id, state] : g->voice_members) {
-            recording_buffers[user_id].reserve(1024 * 1024); // Reserve 1MB initially
-            users_in_channel.push_back(user_id);
+        // Initialize states for all users in the voice channel
+        {
+            std::lock_guard<std::mutex> lock(audio_states_mutex);
+            user_audio_states.clear();
+            for (const auto& [user_id, state] : g->voice_members) {
+                UserAudioState audio_state;
+                audio_state.current_buffer.reserve(1024 * 1024); // Reserve 1MB initially
+                audio_state.is_speaking = false;
+                audio_state.last_audio_time = std::chrono::steady_clock::now();
+                audio_state.guild_id = guild_id;
+                user_audio_states[user_id] = std::move(audio_state);
+            }
         }
-
-        if (users_in_channel.empty()) {
-            event.reply("No users found in the voice channel!");
-            return;
-        }
-
-        is_recording = true;
         
-        std::string user_list;
-        for (size_t i = 0; i < users_in_channel.size(); ++i) {
-            if (i > 0) user_list += ", ";
-            user_list += "<@" + std::to_string(users_in_channel[i]) + ">";
-        }
-
-        event.reply("Started recording users: " + user_list);
+        startSilenceDetectionTimer();
+        event.reply("Joined your voice channel! I will now transcribe speech automatically when there are pauses in conversation.");
     }
 
     std::vector<uint8_t> VoiceModule::convertToWav(const std::vector<uint8_t>& raw_audio) {
@@ -158,47 +274,6 @@ namespace discord {
         wav_data[43] = (data_size >> 24) & 0xFF;
         
         return wav_data;
-    }
-
-    void VoiceModule::handleStopRecordCommand(const dpp::slashcommand_t& event) {
-        if (!is_recording) {
-            event.reply("Not currently recording!");
-            return;
-        }
-
-        is_recording = false;
-        
-        std::stringstream ss;
-        ss << "Stopped recording. Results:\n";
-        event.reply(ss.str() + "...");
-        
-        for (const auto& [user_id, buffer] : recording_buffers) {
-            size_t recorded_bytes = buffer.size();
-            float recorded_seconds = static_cast<float>(recorded_bytes) / (48000.0f * 2.0f * 2.0f);
-            
-            ss << "<@" << user_id << ">: " << recorded_seconds << " seconds (" << recorded_bytes << " bytes)\n";
-            
-            if (recorded_bytes > 0) {
-                try {
-                    if (stt) {
-                        // Convert raw PCM to WAV format
-                        std::vector<uint8_t> wav_data = convertToWav(buffer);
-                        
-                        // Send to Azure STT
-                        std::string transcribed_text = stt->audioToText(wav_data);
-                        ss << "Transcription: " << transcribed_text << "\n\n";
-                    } else {
-                        ss << "STT not available - Azure credentials not configured\n\n";
-                    }
-                } catch (const std::exception& e) {
-                    LOG_ERROR("Failed to transcribe audio: {}", e.what());
-                    ss << "Failed to transcribe audio: " << e.what() << "\n\n";
-                }
-            }
-        }
-        
-        event.edit_response(ss.str());
-        recording_buffers.clear();
     }
 
     std::vector<uint16_t> VoiceModule::convertTTSAudioFormat(const std::vector<uint8_t>& mono_24khz) {

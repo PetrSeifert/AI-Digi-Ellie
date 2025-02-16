@@ -102,10 +102,8 @@ export DIGI_ELLIE_AZURE_SPEECH_KEY="your_azure_speech_key"
 ### Voice Commands
 Once the bot is running:
 1. Join a voice channel
-2. Use the `/joinvoice` command to make the bot join your channel
-3. Use the `/record` command to start recording
-4. Use the `/stoprecord` command to stop recording and get transcription
-5. The bot will transcribe the recorded audio and display the results
+2. Use the `/joinvoice` command to make the bot join your channel and start recording audio
+3. The bot will transcribe the recorded audio and respond to you
 
 ## Project Structure
 
