@@ -91,8 +91,7 @@ export DIGI_ELLIE_DISCORD_TOKEN="your_discord_token"
 export DIGI_ELLIE_DEFAULT_CHANNEL_ID="your_channel_id"
 ```
 
-### Discord Mode
-To run as a Discord bot:
+### Start the bot
 ```bash
 ./AI-Digi-Ellie
 ```
@@ -110,6 +109,7 @@ Once the bot is running:
 - `vendor/` - Third-party dependencies
   - `DPP/` - D++ Discord library
   - `json/` - nlohmann/json library
+  - `spdlog/` - spdlog logging library
 
 ## License
 

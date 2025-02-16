@@ -10,8 +10,7 @@ find_package(OpenSSL REQUIRED)
 
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/DPP)
-
-include_directories(${PROJECT_SOURCE_DIR}/include)
+add_subdirectory(vendor/spdlog)
 
 set(SOURCES
     src/main.cpp
@@ -29,10 +28,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     dpp
     OpenSSL::SSL
     OpenSSL::Crypto
+    spdlog::spdlog
 )
-
+    
 target_include_directories(${PROJECT_NAME} PRIVATE
-    vendor/DPP/include
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/vendor/DPP/include
+    ${PROJECT_SOURCE_DIR}/vendor/spdlog/include
     ${OPENSSL_INCLUDE_DIR}
 )
 
@@ -49,6 +51,7 @@ if(WIN32)
     # Find all DLL files
     file(GLOB DPP_DLLS_RELEASE "${CMAKE_BINARY_DIR}/vendor/DPP/library/Release/*.dll")
     file(GLOB DPP_DLLS_LIB "${CMAKE_BINARY_DIR}/vendor/DPP/library/*.dll")
+    file(GLOB SPDLOG_DLLS "${CMAKE_BINARY_DIR}/vendor/spdlog/Release/*.dll")
 
     # Get OpenSSL DLL paths
     get_filename_component(OPENSSL_ROOT_DIR ${OPENSSL_INCLUDE_DIR} DIRECTORY)
@@ -73,6 +76,11 @@ if(WIN32)
         # Copy OpenSSL DLLs
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${OPENSSL_DLLS}
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+
+        # Copy spdlog DLLs
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${SPDLOG_DLLS}
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
     )
 endif()

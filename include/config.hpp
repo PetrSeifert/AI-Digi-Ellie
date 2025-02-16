@@ -1,15 +1,18 @@
 #pragma once
+#include "logging.hpp"
+
 #include <string>
 #include <cstdint>
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
+#include <cctype>
 
 namespace config {
     inline std::string getEnvVar(const char* name, const char* defaultValue = "") {
         const char* value = std::getenv(name);
-        if (!value) {
-            std::cout << "Environment variable " << name << " not found. Using default value: " << defaultValue << std::endl;
+        if (value == nullptr) {
+            LOG_WARN("Environment variable {} not found. Using default value: {}", name, defaultValue);
             value = defaultValue;
         }
     
@@ -18,15 +21,15 @@ namespace config {
 
     inline uint64_t getEnvVarUInt64(const char* name, uint64_t defaultValue = 0) {
         const char* value = std::getenv(name);
-        if (!value) {
-            std::cout << "Environment variable " << name << " not found. Using default value: " << defaultValue << std::endl;
+        if (value == nullptr) {
+            LOG_WARN("Environment variable {} not found. Using default value: {}", name, defaultValue);
             return defaultValue;
         }
 
         try {
             return std::stoull(value);
         } catch (...) {
-            std::cout << "Environment variable " << name << " is not a valid unsigned long long. Using default value: " << defaultValue << std::endl;
+            LOG_ERROR("Environment variable {} is not a valid unsigned long long. Using default value: {}", name, defaultValue);
             return defaultValue;
         }
     }

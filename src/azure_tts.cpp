@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include "config.hpp"
+#include "logging.hpp"
 using json = nlohmann::json;
 
 AzureTTS::AzureTTS(const std::string& subscription_key, const std::string& region)
@@ -16,10 +17,10 @@ AzureTTS::~AzureTTS() {}
 
 void AzureTTS::refreshToken() {
     std::string host = region + ".api.cognitive.microsoft.com";
-    std::cout << "Connecting to: " << host << std::endl;
+    LOG_INFO("Connecting to: {}", host);
 
     httplib::SSLClient* cli = new httplib::SSLClient(host.c_str());
-    std::cout << "Using SSL for connection" << std::endl;
+    LOG_INFO("Using SSL for connection");
 
     if (!cli) {
         throw std::runtime_error("Failed to create HTTP client");
@@ -31,28 +32,28 @@ void AzureTTS::refreshToken() {
         {"Ocp-Apim-Subscription-Key", subscription_key},
     };
 
-    std::cout << "Requesting token..." << std::endl;
+    LOG_INFO("Requesting token...");
     auto result = cli->Post("/sts/v1.0/issueToken", headers, "", "");
     
     // Clean up the client
     delete cli;
     
     if (result) {
-        std::cout << "Got response with status: " << result->status << std::endl;
+        LOG_INFO("Got response with status: {}", result->status);
         if (result->status == 200) {
             access_token = result->body;
             // Token is valid for 10 minutes, we'll refresh after 9 minutes
             token_expiry = std::chrono::system_clock::to_time_t(
                 std::chrono::system_clock::now() + std::chrono::minutes(9)
             );
-            std::cout << "Token refreshed successfully" << std::endl;
+            LOG_INFO("Token refreshed successfully");
         } else {
             throw std::runtime_error("Failed to get Azure access token: HTTP " + 
                 std::to_string(result->status) + " - " + result->body);
         }
     } else {
         auto err = result.error();
-        std::cout << "Connection error code: " << static_cast<int>(err) << std::endl;
+        LOG_ERROR("Connection error code: {}", static_cast<int>(err));
         throw std::runtime_error("Failed to connect to Azure: Connection error - " + std::string(httplib::to_string(err)));
     }
 }
@@ -77,13 +78,13 @@ std::vector<uint8_t> AzureTTS::textToSpeech(const std::string& text, const std::
          << "</voice></speak>";
 
     std::string ssml_text = ssml.str();
-    std::cout << "SSML Request:\n" << ssml_text << std::endl;
+    LOG_DEBUG("SSML Request:\n{}", ssml_text);
 
     std::string host = region + ".tts.speech.microsoft.com";
-    std::cout << "Connecting to TTS service: " << host << std::endl;
+    LOG_INFO("Connecting to TTS service: {}", host);
 
     httplib::SSLClient* cli = new httplib::SSLClient(host.c_str());
-    std::cout << "Using SSL for TTS connection" << std::endl;
+    LOG_INFO("Using SSL for TTS connection");
 
     if (!cli) {
         throw std::runtime_error("Failed to create HTTP client");
@@ -102,30 +103,30 @@ std::vector<uint8_t> AzureTTS::textToSpeech(const std::string& text, const std::
     };
 
     // Print request details for debugging
-    std::cout << "\nRequest Headers:" << std::endl;
+    LOG_DEBUG("Request Headers:");
     for (const auto& header : headers) {
         if (header.first != "Authorization") { // Don't print the auth token
-            std::cout << header.first << ": " << header.second << std::endl;
+            LOG_DEBUG("{}: {}", header.first, header.second);
         }
     }
-    std::cout << "\nRequest Body:\n" << ssml_text << std::endl;
+    LOG_DEBUG("Request Body:\n{}", ssml_text);
     
-    std::cout << "Sending TTS request..." << std::endl;
+    LOG_INFO("Sending TTS request...");
     auto result = cli->Post("/cognitiveservices/v1", headers, ssml_text, "application/ssml+xml");
     
     // Clean up the client
     delete cli;
     
     if (result) {
-        std::cout << "Got TTS response with status: " << result->status << std::endl;
-        std::cout << "Response Headers:" << std::endl;
+        LOG_INFO("Got TTS response with status: {}", result->status);
+        LOG_DEBUG("Response Headers:");
         for (const auto& header : result->headers) {
-            std::cout << header.first << ": " << header.second << std::endl;
+            LOG_DEBUG("{}: {}", header.first, header.second);
         }
         
         if (result->status == 200) {
             const std::string& body = result->body;
-            std::cout << "Received audio data of size: " << body.size() << " bytes" << std::endl;
+            LOG_INFO("Received audio data of size: {} bytes", body.size());
             
             // Validate audio data size
             size_t expected_sample_size = 2; // 16-bit = 2 bytes per sample
@@ -135,13 +136,13 @@ std::vector<uint8_t> AzureTTS::textToSpeech(const std::string& text, const std::
             
             return std::vector<uint8_t>(body.begin(), body.end());
         } else {
-            std::cout << "Error Response Body: " << result->body << std::endl;
+            LOG_ERROR("Error Response Body: {}", result->body);
             throw std::runtime_error("Failed to convert text to speech: HTTP " + 
                 std::to_string(result->status) + " - " + result->body);
         }
     } else {
         auto err = result.error();
-        std::cout << "TTS connection error code: " << static_cast<int>(err) << std::endl;
+        LOG_ERROR("TTS connection error code: {}", static_cast<int>(err));
         throw std::runtime_error("Failed to connect to Azure TTS: Connection error - " + std::string(httplib::to_string(err)));
     }
 } 

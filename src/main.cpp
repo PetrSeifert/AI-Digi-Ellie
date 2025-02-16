@@ -8,78 +8,96 @@
 #include "conversation.hpp"
 #include "system_control.hpp"
 #include "discord_bot.hpp"
+#include "logging.hpp"
 
 // Function to handle console interaction
 void runConsoleMode() {
-    std::cout << "Digi-Ellie started. Type '/exit' to quit.\n";
-    std::cout << "Please enter your name: ";
+    LOG_INFO("Starting console mode");
+    LOG_INFO("Digi-Ellie started. Type '/exit' to quit.");
+    LOG_INFO("Please enter your name: ");
     std::string userName;
     std::getline(std::cin, userName);
     if (userName.empty()) userName = "User";
+    LOG_INFO("User '{}' joined the session", userName);
 
     std::string bootPrompt = buildPrompt("<Bootup>", "System");
     std::string initialResponse = runInference(bootPrompt);
-    std::cout << "Ellie: " << initialResponse << std::endl;
-    std::cout << "Ellie: Hello " << userName << "!\n";
+    LOG_DEBUG("Boot prompt response: {}", initialResponse);
+    LOG_INFO("Ellie: {}", initialResponse);
+    LOG_INFO("Ellie: Hello {}!", userName);
 
     while (true) {
-        std::cout << userName << ": ";
+        LOG_INFO("{}: ", userName);
         std::string userInput;
         if (!std::getline(std::cin, userInput)) {
+            LOG_ERROR("Failed to read user input");
             break;
         }
 
         if (userInput == "/exit") {
+            LOG_INFO("User requested exit");
             std::string exitPrompt = buildPrompt("<Shutdown>", "System");
             std::string ellieResponse = runInference(exitPrompt);
-            std::cout << "Ellie: " << ellieResponse << std::endl;
+            LOG_INFO("Ellie: {}", ellieResponse);
             break;
         }
 
         if (userInput == "/clear") {
+            LOG_INFO("Clearing conversation history");
             clearHistory();
-            std::cout << "Conversation history cleared.\n";
+            LOG_INFO("Conversation history cleared.");
             continue;
         }
 
+        LOG_DEBUG("Processing user input: {}", userInput);
         std::string prompt = buildPrompt(userInput, userName);
         std::string ellieResponse = runInference(prompt);
 
         if (isSystemCommand(ellieResponse)) {
+            LOG_INFO("Handling system command: {}", ellieResponse);
             handleSystemCommand(ellieResponse);
         } else {
-            std::cout << "Ellie: " << ellieResponse << std::endl;
+            LOG_DEBUG("Ellie's response: {}", ellieResponse);
+            LOG_INFO("Ellie: {}", ellieResponse);
         }
     }
 }
 
 int main(int argc, char* argv[]) {
+    // Initialize logging
+    logging::init();
+    LOG_INFO("Digi-Ellie starting up");
+
     if (!initializeModel()) {
-        std::cerr << "Error: Failed to load the model.\n";
+        LOG_CRITICAL("Failed to load the model");
         return 1;
     }
+    LOG_INFO("Model initialized successfully");
 
     // Check if Discord token is provided and select mode
     std::string discordToken = config::DISCORD_TOKEN;
     if (!discordToken.empty()) {
-        std::cout << "Starting in Discord mode...\n";
+        LOG_INFO("Discord token found, starting in Discord mode");
+        LOG_INFO("Starting in Discord mode...");
         
         try {
             DiscordBot bot(discordToken);
             bot.start();
-                 
-            std::cout << "Bot has stopped, shutting down...\n";
+            
+            LOG_INFO("Bot has stopped, shutting down...");
             shutdownModel();
             return 0;
         } catch (const std::exception& e) {
-            std::cerr << "Discord bot error: " << e.what() << std::endl;
+            LOG_CRITICAL("Discord bot error: {}", e.what());
             return 1;
         }
     } else {
-        std::cout << "Discord token not provided, starting in console mode...\n";
+        LOG_WARN("Discord token not provided, starting in console mode...");
         runConsoleMode();
     }
 
+    LOG_INFO("Shutting down model");
     shutdownModel();
+    LOG_INFO("Digi-Ellie shutdown complete");
     return 0;
 }

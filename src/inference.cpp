@@ -1,12 +1,14 @@
 #include "inference.hpp"
 #include "conversation.hpp"
+#include "httplib.h"
+#include "logging.hpp"
+
 #include <string>
 #include <map>
 #include <random>
 #include <algorithm>
 #include <cctype>
 #include <iostream>
-#include "httplib.h"
 #include <nlohmann/json.hpp>
 #include <vector>
 
@@ -24,18 +26,18 @@ bool initializeModel() {
         // Test connection and check if model exists
         auto response = g_client->Get("/api/tags");
         if (!response || response->status != 200) {
-            std::cerr << "Failed to connect to Ollama server at " << OLLAMA_HOST << ":" << OLLAMA_PORT << std::endl;
+            LOG_CRITICAL("Failed to connect to Ollama server at {} : {}", OLLAMA_HOST, OLLAMA_PORT);
             return false;
         }
 
         g_initialized = true;
-        std::cout << "Connected to Ollama server successfully!\n";
+        LOG_INFO("Connected to Ollama server successfully!");
         
         // Initialize conversation with system prompt
         initializeConversation();
         return true;
     } catch (const std::exception& e) {
-        std::cerr << "Error initializing Ollama client: " << e.what() << std::endl;
+        LOG_CRITICAL("Error initializing Ollama client: {}", e.what());
         return false;
     }
 }
@@ -62,7 +64,7 @@ std::string runInference(const std::string& conversationJson) {
                                      "application/json");
 
         if (!response || response->status != 200) {
-            std::cerr << "Error response: " << (response ? response->body : "No response") << std::endl;
+            LOG_ERROR("Error response: {}", (response ? response->body : "No response"));
             return "[Error: Failed to get response from Ollama]";
         }
 

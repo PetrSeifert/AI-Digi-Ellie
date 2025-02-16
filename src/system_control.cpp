@@ -1,4 +1,5 @@
 #include "system_control.hpp"
+#include "logging.hpp"
 #include <iostream>
 
 bool isSystemCommand(const std::string& response) {
@@ -6,9 +7,9 @@ bool isSystemCommand(const std::string& response) {
 }
 
 void handleSystemCommand(const std::string& commandText) {
-    std::cout << "System command requested: " << commandText << std::endl;
+    LOG_INFO("System command requested: {}", commandText);
 
-    std::cout << "Allow? [y/N]: ";
+    LOG_INFO("Allow? [y/N]: ");
     std::string decision;
     std::getline(std::cin, decision);
 
@@ -17,6 +18,6 @@ void handleSystemCommand(const std::string& commandText) {
         // system("start notepad.exe");
         // or do more advanced calls
     } else {
-        std::cout << "Command denied.\n";
+        LOG_INFO("Command denied.");
     }
 }

@@ -2,13 +2,14 @@
 #include "conversation.hpp"
 #include "inference.hpp"
 #include "config.hpp"
+#include "logging.hpp"
 #include <iostream>
 #include <iomanip>
 #include <thread>
 #include <chrono>
 
 DiscordBot::DiscordBot(const std::string& token) : is_running(false), voice_connected(false), current_voice_channel(0) {
-    std::cout << "Creating Discord bot...\n";
+    LOG_INFO("Creating Discord bot...");
     
     // Set up intents to receive message content and other required intents
     uint32_t intents = dpp::i_default_intents | dpp::i_message_content | dpp::i_guild_messages | dpp::i_direct_messages;
@@ -19,13 +20,12 @@ DiscordBot::DiscordBot(const std::string& token) : is_running(false), voice_conn
         tts = std::make_unique<AzureTTS>(config::AZURE_TTS_KEY, config::AZURE_TTS_REGION);
     }
     
-    std::cout << "Bot instance created with intents: 0x" << std::hex << intents << std::dec << "\n";
-    std::cout << "Make sure Message Content Intent is enabled in Discord Developer Portal!\n";
+    LOG_INFO("Bot instance created with intents: 0x{:x}", intents);
+    LOG_INFO("Make sure Message Content Intent is enabled in Discord Developer Portal!");
     
-    // Log startup
-    std::cout << "Setting up events...\n";
+    LOG_INFO("Setting up events...");
     setupEvents();
-    std::cout << "Events setup completed.\n";
+    LOG_INFO("Events setup completed.");
 }
 
 DiscordBot::~DiscordBot() {
@@ -35,7 +35,7 @@ DiscordBot::~DiscordBot() {
 void DiscordBot::registerCommands() {
     if (!bot) return;
 
-    std::cout << "Registering commands for application ID: " << bot->me.id << "\n";
+    LOG_INFO("Registering commands for application ID: {}", bot->me.id);
 
     std::vector<dpp::slashcommand> commands;
 
@@ -59,27 +59,27 @@ void DiscordBot::registerCommands() {
     // Bulk register all commands globally
     bot->global_bulk_command_create(commands, [this, commandCount](const dpp::confirmation_callback_t& callback) {
         if (callback.is_error()) {
-            std::cout << "Error registering commands: " << callback.get_error().message << "\n";
+            LOG_ERROR("Error registering commands: {}", callback.get_error().message);
         } else {
-            std::cout << "Successfully registered " << commandCount << " slash commands.\n";
+            LOG_INFO("Successfully registered {} slash commands.", commandCount);
         }
     });
 }
 
 void DiscordBot::setupEvents() {
     if (!bot) {
-        std::cerr << "Error: Bot instance is null during event setup!\n";
+        LOG_ERROR("Error: Bot instance is null during event setup!");
         return;
     }
 
-    std::cout << "Setting up on_ready event...\n";
+    LOG_INFO("Setting up on_ready event...");
 
     // Log when bot is ready
     bot->on_ready([this](const dpp::ready_t& event) {
-        std::cout << "\n=== Bot Ready Event ===\n";
-        std::cout << "Logged in as: " << bot->me.username << "\n";
-        std::cout << "Bot ID: " << bot->me.id << "\n";
-        std::cout << "=====================\n";
+        LOG_INFO("=== Bot Ready Event ===");
+        LOG_INFO("Logged in as: {}", bot->me.username);
+        LOG_INFO("Bot ID: {}", bot->me.id);
+        LOG_INFO("=====================");
 
         // Register commands after bot is ready
         registerCommands();
@@ -97,7 +97,7 @@ void DiscordBot::setupEvents() {
         handleSlashCommand(event);
     });
 
-    std::cout << "Setting up on_message_create event...\n";
+    LOG_INFO("Setting up on_message_create event...");
 
     // Handle incoming messages
     bot->on_message_create([this](const dpp::message_create_t& event) {
@@ -106,24 +106,15 @@ void DiscordBot::setupEvents() {
 
     // Add log handler
     bot->on_log([](const dpp::log_t& event) {
-        switch (event.severity) {
-            case dpp::ll_critical:
-                std::cout << "\033[1;31mCRITICAL: ";  // Bright Red
-                break;
-            case dpp::ll_error:
-                std::cout << "\033[31mERROR: ";      // Red
-                break;
-            case dpp::ll_warning:
-                std::cout << "\033[33mWARNING: ";    // Yellow
-                break;
-            case dpp::ll_info:
-                std::cout << "\033[32mINFO: ";       // Green
-                break;
-            case dpp::ll_debug:
-                std::cout << "\033[36mDEBUG: ";      // Cyan
-                break;
+        std::string level = "INFO";
+        if (event.severity == dpp::ll_critical) {
+            level = "CRITICAL";
+        } else if (event.severity == dpp::ll_error) {
+            level = "ERROR";
+        } else if (event.severity == dpp::ll_warning) {
+            level = "WARNING";
         }
-        std::cout << event.message << "\033[0m" << std::endl;  // Reset color at end
+        LOG_INFO("{}: {}", level, event.message);
     });
 }
 
@@ -188,33 +179,35 @@ void DiscordBot::handleMessage(const dpp::message_create_t& event) {
     std::string userMessage = event.msg.content;
 
     // Debug output
-    std::cout << "\n=== Incoming Discord Message ===\n";
-    std::cout << "From: " << userName << " (ID: " << event.msg.author.id << ")\n";
-    std::cout << "Channel: " << event.msg.channel_id << "\n";
-    std::cout << "Content: " << userMessage << "\n";
-    std::cout << "Message Length: " << userMessage.length() << "\n";
-    std::cout << "Raw Content Bytes: ";
-    for (unsigned char c : userMessage) {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(c) << " ";
-    }
-    std::cout << std::dec << "\n";
-    std::cout << "==============================\n";
+    LOG_INFO("=== Incoming Discord Message ===");
+    LOG_INFO("From: {} (ID: {})", userName, event.msg.author.id);
+    LOG_INFO("Channel: {}", event.msg.channel_id);
+    LOG_INFO("Content: {}", userMessage);
+    LOG_INFO("Message Length: {}", userMessage.length());
+    LOG_DEBUG("Raw Content Bytes: {}", [&userMessage]() {
+        std::stringstream ss;
+        for (unsigned char c : userMessage) {
+            ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(c) << " ";
+        }
+        return ss.str();
+    }());
+    LOG_INFO("==============================");
 
     // Build the prompt from the user's message
     std::string prompt = buildPrompt(userMessage, userName);
     
     // Debug output for prompt
-    std::cout << "\n=== Generated Prompt ===\n";
-    std::cout << prompt << "\n";
-    std::cout << "=====================\n";
+    LOG_DEBUG("=== Generated Prompt ===");
+    LOG_DEBUG("{}", prompt);
+    LOG_DEBUG("=====================");
 
     // Get Ellie's response
     std::string ellieResponse = runInference(prompt);
 
     // Debug output for response
-    std::cout << "\n=== Ellie's Response ===\n";
-    std::cout << ellieResponse << "\n";
-    std::cout << "==================\n";
+    LOG_INFO("=== Ellie's Response ===");
+    LOG_INFO("{}", ellieResponse);
+    LOG_INFO("==================");
 
     // Send the response back to Discord
     if (!ellieResponse.empty()) {
@@ -226,11 +219,11 @@ void DiscordBot::handleMessage(const dpp::message_create_t& event) {
         // Split long messages if they exceed Discord's limit
         const size_t MAX_MESSAGE_LENGTH = 2000;
         if (ellieResponse.length() > MAX_MESSAGE_LENGTH) {
-            std::cout << "Response exceeds Discord limit, splitting into chunks...\n";
+            LOG_INFO("Response exceeds Discord limit, splitting into chunks...");
             for (size_t i = 0; i < ellieResponse.length(); i += MAX_MESSAGE_LENGTH) {
                 std::string chunk = ellieResponse.substr(i, MAX_MESSAGE_LENGTH);
                 bot->message_create(dpp::message(event.msg.channel_id, chunk));
-                std::cout << "Sent chunk of size: " << chunk.length() << "\n";
+                LOG_DEBUG("Sent chunk of size: {}", chunk.length());
             }
         } else {
             bot->message_create(dpp::message(event.msg.channel_id, ellieResponse));
@@ -240,7 +233,7 @@ void DiscordBot::handleMessage(const dpp::message_create_t& event) {
 
 void DiscordBot::speakText(const std::string& text, dpp::snowflake guild_id) {
     if (!tts) {
-        std::cout << "TTS not initialized - missing Azure key\n";
+        LOG_WARN("TTS not initialized - missing Azure key");
         return;
     }
 
@@ -255,7 +248,7 @@ void DiscordBot::speakText(const std::string& text, dpp::snowflake guild_id) {
             vconn->voiceclient->send_audio_raw(stereo_data.data(), stereo_data.size() * sizeof(uint16_t));
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error in TTS: " << e.what() << std::endl;
+        LOG_ERROR("Error in TTS: {}", e.what());
     }
 }
 
@@ -288,20 +281,19 @@ std::vector<uint16_t> DiscordBot::convertTTSAudioFormat(const std::vector<uint8_
     stereo_data.push_back(static_cast<uint16_t>(mono_samples[num_samples - 1]));
     stereo_data.push_back(static_cast<uint16_t>(mono_samples[num_samples - 1]));
     
-    std::cout << "Converted " << num_samples << " mono samples to " 
-              << stereo_data.size() << " stereo samples" << std::endl;
+    LOG_DEBUG("Converted {} mono samples to stereo", num_samples);
     
     return stereo_data;
 }
 
 void DiscordBot::start() {
     if (!is_running) {
-        std::cout << "Starting Discord bot...\n";
+        LOG_INFO("Starting Discord bot...");
         is_running = true;
         try {
             bot->start(dpp::st_wait);  // Start and wait for events
         } catch (const std::exception& e) {
-            std::cerr << "Error starting bot: " << e.what() << "\n";
+            LOG_ERROR("Error starting bot: {}", e.what());
             is_running = false;
         }
     }
@@ -309,9 +301,9 @@ void DiscordBot::start() {
 
 void DiscordBot::stop() {
     if (is_running) {
-        std::cout << "Stopping Discord bot...\n";
+        LOG_INFO("Stopping Discord bot...");
         is_running = false;
         bot->shutdown();
-        std::cout << "Bot stopped.\n";
+        LOG_INFO("Bot stopped.");
     }
 } 
