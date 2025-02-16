@@ -24,7 +24,7 @@ namespace discord {
 
         try {
             // Convert text to speech
-            std::vector<uint8_t> audio_data = tts->textToSpeech(text, config::AZURE_TTS_VOICE);
+            std::vector<uint8_t> audio_data = tts->textToSpeech(text, config::AZURE_SPEECH_VOICE);
             
             // Get voice connection for the guild
             if (auto vconn = core->getBot()->get_shard(0)->get_voice(guild_id)) {

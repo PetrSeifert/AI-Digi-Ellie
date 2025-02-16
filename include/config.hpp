@@ -43,8 +43,8 @@ namespace config {
     const uint64_t DEFAULT_CHANNEL_ID = getEnvVarUInt64("DIGI_ELLIE_DEFAULT_CHANNEL_ID", 0);
 
     // Azure TTS Configuration
-    const std::string AZURE_TTS_APP_NAME = getEnvVar("DIGI_ELLIE_AZURE_TTS_APP_NAME");
-    const std::string AZURE_TTS_KEY = getEnvVar("DIGI_ELLIE_AZURE_TTS_KEY");
-    const std::string AZURE_TTS_REGION = getEnvVar("DIGI_ELLIE_AZURE_TTS_REGION", "germanywestcentral");
-    const std::string AZURE_TTS_VOICE = getEnvVar("DIGI_ELLIE_AZURE_TTS_VOICE", "en-US-JennyNeural");
+    const std::string AZURE_SPEECH_APP_NAME = getEnvVar("DIGI_ELLIE_AZURE_SPEECH_APP_NAME");
+    const std::string AZURE_SPEECH_KEY = getEnvVar("DIGI_ELLIE_AZURE_SPEECH_KEY");
+    const std::string AZURE_SPEECH_REGION = getEnvVar("DIGI_ELLIE_AZURE_SPEECH_REGION", "germanywestcentral");
+    const std::string AZURE_SPEECH_VOICE = getEnvVar("DIGI_ELLIE_AZURE_SPEECH_VOICE", "en-US-JennyNeural");
 } 

@@ -9,6 +9,7 @@ AI-Digi-Ellie is an AI-powered companion. She can operate in two modes:
 - AI-powered conversation capabilities
 - Discord integration using the D++ library
 - Text-to-Speech support using Azure Cognitive Services
+- Speech-to-Text support using Azure Cognitive Services
 - Supports both Discord bot and console modes
 
 ## Requirements
@@ -36,12 +37,12 @@ The project uses environment variables for configuration. Set the following vari
 ### Optional Environment Variables
 - `DIGI_ELLIE_MODEL_NAME` - Ollama model name (default: "mistral")
 
-### Text-to-Speech Configuration
-To enable TTS functionality, set these environment variables:
-- `DIGI_ELLIE_AZURE_TTS_KEY` - Your Azure Cognitive Services subscription key
-- `DIGI_ELLIE_AZURE_TTS_REGION` - Azure region (default: "germanywestcentral")
-- `DIGI_ELLIE_AZURE_TTS_VOICE` - Voice to use (default: "en-US-JennyNeural")
-- `DIGI_ELLIE_AZURE_TTS_APP_NAME` - Application name for Azure requests
+### TTS and STT Configuration
+To enable TTS and STT functionality, set these environment variables:
+- `DIGI_ELLIE_AZURE_SPEECH_KEY` - Your Azure Cognitive Services subscription key
+- `DIGI_ELLIE_AZURE_SPEECH_REGION` - Azure region (default: "germanywestcentral")
+- `DIGI_ELLIE_AZURE_SPEECH_VOICE` - Voice to use (default: "en-US-JennyNeural")
+- `DIGI_ELLIE_AZURE_SPEECH_APP_NAME` - Application name for Azure requests
 
 ## Building the Project
 
@@ -77,11 +78,11 @@ cmake --build build --config Release
 2. Enable Message Content Intent in the bot settings
 3. Add the bot to your server with appropriate permissions (text, voice)
 
-### Azure TTS Setup
+### Azure Setup
 1. Create an Azure account and subscribe to Azure Cognitive Services
 2. Create a Speech Service resource in your preferred region
 3. Get your subscription key and region from the Azure portal
-4. Set the required environment variables
+4. Set the required environment variables for TTS and/or STT
 
 ## Running the Bot
 
@@ -90,6 +91,7 @@ Set the required environment variables:
 ```bash
 export DIGI_ELLIE_DISCORD_TOKEN="your_discord_token"
 export DIGI_ELLIE_DEFAULT_CHANNEL_ID="your_channel_id"
+export DIGI_ELLIE_AZURE_SPEECH_KEY="your_azure_speech_key"
 ```
 
 ### Start the bot
@@ -101,7 +103,9 @@ export DIGI_ELLIE_DEFAULT_CHANNEL_ID="your_channel_id"
 Once the bot is running:
 1. Join a voice channel
 2. Use the `/joinvoice` command to make the bot join your channel
-3. The bot will now speak its responses using TTS
+3. Use the `/record` command to start recording
+4. Use the `/stoprecord` command to stop recording and get transcription
+5. The bot will transcribe the recorded audio and display the results
 
 ## Project Structure
 

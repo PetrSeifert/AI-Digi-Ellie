@@ -26,8 +26,8 @@ void DiscordBot::initializeModules() {
     voice = std::make_shared<discord::VoiceModule>(core, commands);
     
     // Create TTS module if Azure key is provided
-    if (!config::AZURE_TTS_KEY.empty()) {
-        tts = std::make_shared<discord::TTSModule>(core, config::AZURE_TTS_KEY, config::AZURE_TTS_REGION);
+    if (!config::AZURE_SPEECH_KEY.empty()) {
+        tts = std::make_shared<discord::TTSModule>(core, config::AZURE_SPEECH_KEY, config::AZURE_SPEECH_REGION);
     }
     
     // Create message module

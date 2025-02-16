@@ -2,6 +2,7 @@
 
 #include "core.hpp"
 #include "commands.hpp"
+#include "azure_stt.hpp"
 #include <dpp/dpp.h>
 #include <vector>
 #include <map>
@@ -24,9 +25,11 @@ namespace discord {
 
     private:
         void registerCommands();
+        std::vector<uint8_t> convertToWav(const std::vector<uint8_t>& raw_audio);
 
         std::shared_ptr<CoreBot> core;
         std::shared_ptr<CommandsModule> commands;
+        std::unique_ptr<AzureSTT> stt;
         bool voice_connected;
         bool is_recording;
         std::map<dpp::snowflake, std::vector<uint8_t>> recording_buffers;

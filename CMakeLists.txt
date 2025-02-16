@@ -21,6 +21,7 @@ set(SOURCES
     src/discord_bot/tts.cpp
     src/discord_bot/message.cpp
     src/azure_tts.cpp
+    src/azure_stt.cpp
     src/inference.cpp
     src/conversation.cpp
     src/system_control.cpp
@@ -60,10 +61,7 @@ if(WIN32)
 
     # Get OpenSSL DLL paths
     get_filename_component(OPENSSL_ROOT_DIR ${OPENSSL_INCLUDE_DIR} DIRECTORY)
-    set(OPENSSL_DLLS
-        "${OPENSSL_ROOT_DIR}/bin/libssl-3-x64.dll"
-        "${OPENSSL_ROOT_DIR}/bin/libcrypto-3-x64.dll"
-    )
+    file(GLOB OPENSSL_DLLS "${OPENSSL_ROOT_DIR}/bin/*.dll")
 
     # Copy DLLs after build
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

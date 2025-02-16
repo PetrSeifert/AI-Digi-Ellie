@@ -1,5 +1,6 @@
 #include "discord_bot/voice.hpp"
 #include "logging.hpp"
+#include "config.hpp"
 #include <thread>
 #include <chrono>
 
@@ -7,6 +8,14 @@ namespace discord {
 
     VoiceModule::VoiceModule(std::shared_ptr<CoreBot> core, std::shared_ptr<CommandsModule> commands) 
         : core(core), commands(commands), voice_connected(false), is_recording(false) {
+        
+        // Initialize Azure STT if key is provided
+        if (!config::AZURE_SPEECH_KEY.empty()) {
+            stt = std::make_unique<AzureSTT>(config::AZURE_SPEECH_KEY, config::AZURE_SPEECH_REGION);
+            LOG_INFO("STT module initialized with Azure credentials");
+        } else {
+            LOG_WARN("STT module initialized without Azure credentials - STT functionality will be disabled");
+        }
         
         // Set up voice receive handler
         core->getBot()->on_voice_receive([this](const dpp::voice_receive_t& event) {
@@ -105,6 +114,52 @@ namespace discord {
         event.reply("Started recording users: " + user_list);
     }
 
+    std::vector<uint8_t> VoiceModule::convertToWav(const std::vector<uint8_t>& raw_audio) {
+        // WAV header for 48kHz 16-bit stereo PCM
+        const uint8_t wav_header[] = {
+            'R', 'I', 'F', 'F',                 // ChunkID
+            0, 0, 0, 0,                         // ChunkSize (to be filled)
+            'W', 'A', 'V', 'E',                 // Format
+            'f', 'm', 't', ' ',                 // Subchunk1ID
+            16, 0, 0, 0,                        // Subchunk1Size (16 for PCM)
+            1, 0,                               // AudioFormat (1 for PCM)
+            2, 0,                               // NumChannels (2 for stereo)
+            0x80, 0xBB, 0, 0,                   // SampleRate (48000)
+            0x00, 0xEE, 0x02, 0,                // ByteRate (48000 * 2 * 2)
+            4, 0,                               // BlockAlign (2 * 2)
+            16, 0,                              // BitsPerSample (16)
+            'd', 'a', 't', 'a',                 // Subchunk2ID
+            0, 0, 0, 0                          // Subchunk2Size (to be filled)
+        };
+
+        std::vector<uint8_t> wav_data;
+        wav_data.reserve(sizeof(wav_header) + raw_audio.size());
+        
+        // Copy header
+        wav_data.insert(wav_data.end(), wav_header, wav_header + sizeof(wav_header));
+        
+        // Copy audio data
+        wav_data.insert(wav_data.end(), raw_audio.begin(), raw_audio.end());
+        
+        // Fill in sizes
+        uint32_t data_size = raw_audio.size();
+        uint32_t chunk_size = data_size + 36; // 36 = size of header minus 8
+        
+        // Write ChunkSize
+        wav_data[4] = chunk_size & 0xFF;
+        wav_data[5] = (chunk_size >> 8) & 0xFF;
+        wav_data[6] = (chunk_size >> 16) & 0xFF;
+        wav_data[7] = (chunk_size >> 24) & 0xFF;
+        
+        // Write Subchunk2Size
+        wav_data[40] = data_size & 0xFF;
+        wav_data[41] = (data_size >> 8) & 0xFF;
+        wav_data[42] = (data_size >> 16) & 0xFF;
+        wav_data[43] = (data_size >> 24) & 0xFF;
+        
+        return wav_data;
+    }
+
     void VoiceModule::handleStopRecordCommand(const dpp::slashcommand_t& event) {
         if (!is_recording) {
             event.reply("Not currently recording!");
@@ -120,20 +175,25 @@ namespace discord {
         for (const auto& [user_id, buffer] : recording_buffers) {
             size_t recorded_bytes = buffer.size();
             float recorded_seconds = static_cast<float>(recorded_bytes) / (48000.0f * 2.0f * 2.0f);
-            int recorded_milliseconds = static_cast<int>(recorded_seconds * 1000.0f);
             
             ss << "<@" << user_id << ">: " << recorded_seconds << " seconds (" << recorded_bytes << " bytes)\n";
             
-            if (auto vconn = core->getBot()->get_shard(0)->get_voice(event.command.guild_id)) {
-                uint16_t* audio_data = reinterpret_cast<uint16_t*>(const_cast<uint8_t*>(buffer.data()));
-                size_t sample_count = buffer.size() / sizeof(uint16_t);
-                
-                if (sample_count > 0) {
-                    LOG_INFO("Playing back {} samples of audio from user {}", sample_count, user_id);
-                    vconn->voiceclient->send_audio_raw(audio_data, buffer.size());
+            if (recorded_bytes > 0) {
+                try {
+                    if (stt) {
+                        // Convert raw PCM to WAV format
+                        std::vector<uint8_t> wav_data = convertToWav(buffer);
+                        
+                        // Send to Azure STT
+                        std::string transcribed_text = stt->audioToText(wav_data);
+                        ss << "Transcription: " << transcribed_text << "\n\n";
+                    } else {
+                        ss << "STT not available - Azure credentials not configured\n\n";
+                    }
+                } catch (const std::exception& e) {
+                    LOG_ERROR("Failed to transcribe audio: {}", e.what());
+                    ss << "Failed to transcribe audio: " << e.what() << "\n\n";
                 }
-                
-                std::this_thread::sleep_for(std::chrono::milliseconds(recorded_milliseconds + 2000));
             }
         }
         
