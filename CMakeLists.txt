@@ -15,10 +15,15 @@ add_subdirectory(vendor/spdlog)
 set(SOURCES
     src/main.cpp
     src/discord_bot.cpp
-    src/conversation.cpp
-    src/inference.cpp
-    src/system_control.cpp
+    src/discord_bot/core.cpp
+    src/discord_bot/voice.cpp
+    src/discord_bot/commands.cpp
+    src/discord_bot/tts.cpp
+    src/discord_bot/message.cpp
     src/azure_tts.cpp
+    src/inference.cpp
+    src/conversation.cpp
+    src/system_control.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
