@@ -8,7 +8,8 @@
 #include <thread>
 #include <chrono>
 
-DiscordBot::DiscordBot(const std::string& token) : is_running(false), voice_connected(false), current_voice_channel(0) {
+DiscordBot::DiscordBot(const std::string& token) : is_running(false), voice_connected(false), current_voice_channel(0),
+    is_recording(false), recording_user_id(0) {
     LOG_INFO("Creating Discord bot...");
     
     // Set up intents to receive message content and other required intents
@@ -53,6 +54,17 @@ void DiscordBot::registerCommands() {
     dpp::slashcommand joinVoiceCommand("joinvoice", "Join your current voice channel", bot->me.id);
     joinVoiceCommand.default_member_permissions = 0;
     commands.push_back(joinVoiceCommand);
+
+    // Create the record command
+    dpp::slashcommand recordCommand("record", "Start recording a user's voice", bot->me.id);
+    recordCommand.add_option(dpp::command_option(dpp::co_user, "user", "The user to record", true));
+    recordCommand.default_member_permissions = 0;
+    commands.push_back(recordCommand);
+
+    // Create the stop recording command
+    dpp::slashcommand stopRecordCommand("stoprecord", "Stop recording voice", bot->me.id);
+    stopRecordCommand.default_member_permissions = 0;
+    commands.push_back(stopRecordCommand);
 
     size_t commandCount = commands.size();
 
@@ -116,6 +128,19 @@ void DiscordBot::setupEvents() {
         }
         LOG_INFO("{}: {}", level, event.message);
     });
+
+    // Add voice receive handler
+    bot->on_voice_receive([this](const dpp::voice_receive_t& event) {
+        if (is_recording && event.user_id == recording_user_id) {
+            // Append the new audio data to our buffer
+            size_t current_size = recording_buffer.size();
+            recording_buffer.resize(current_size + event.audio_size);
+            std::memcpy(recording_buffer.data() + current_size, event.audio, event.audio_size);
+            
+            LOG_DEBUG("Recorded {} bytes of audio from user {} (total: {} bytes)", 
+                     event.audio_size, event.user_id, recording_buffer.size());
+        }
+    });
 }
 
 void DiscordBot::handleSlashCommand(const dpp::slashcommand_t& event) {
@@ -129,6 +154,12 @@ void DiscordBot::handleSlashCommand(const dpp::slashcommand_t& event) {
     }
     else if (commandName == "joinvoice") {
         joinVoiceCommand(event);
+    }
+    else if (commandName == "record") {
+        recordCommand(event);
+    }
+    else if (commandName == "stoprecord") {
+        stopRecordCommand(event);
     }
 }
 
@@ -306,4 +337,72 @@ void DiscordBot::stop() {
         bot->shutdown();
         LOG_INFO("Bot stopped.");
     }
-} 
+}
+
+void DiscordBot::recordCommand(const dpp::slashcommand_t& event) {
+    // Check if we're already recording
+    if (is_recording) {
+        event.reply("Already recording someone! Stop the current recording first.");
+        return;
+    }
+
+    // Get the user to record
+    auto user = std::get<dpp::snowflake>(event.get_parameter("user"));
+    
+    // Get the guild
+    dpp::guild* g = dpp::find_guild(event.command.guild_id);
+    if (!g) {
+        event.reply("Failed to find the guild!");
+        return;
+    }
+
+    // Check if we're in a voice channel
+    if (!voice_connected) {
+        event.reply("Bot needs to be in a voice channel first! Use /joinvoice");
+        return;
+    }
+
+    // Clear and reserve some space in the recording buffer
+    recording_buffer.clear();
+    recording_buffer.reserve(1024 * 1024); // Reserve 1MB initially, will grow if needed
+    
+    // Set up recording state
+    recording_user_id = user;
+    is_recording = true;
+
+    event.reply("Started recording user <@" + std::to_string(user) + ">");
+}
+
+void DiscordBot::stopRecordCommand(const dpp::slashcommand_t& event) {
+    if (!is_recording) {
+        event.reply("Not currently recording anyone!");
+        return;
+    }
+
+    // Reset recording state
+    is_recording = false;
+    std::string recorded_user = std::to_string(recording_user_id);
+    recording_user_id = 0;
+
+    size_t recorded_bytes = recording_buffer.size();
+    float recorded_seconds = static_cast<float>(recorded_bytes) / (48000.0f * 2.0f * 2.0f); // 48kHz, 16-bit, stereo
+
+    event.reply("Stopped recording user <@" + recorded_user + ">. Recorded " + 
+                std::to_string(recorded_seconds) + " seconds of audio (" +
+                std::to_string(recorded_bytes) + " bytes). Playing back...");
+    
+    // Get voice connection for the guild
+    if (auto vconn = bot->get_shard(0)->get_voice(event.command.guild_id)) {
+        uint16_t* audio_data = reinterpret_cast<uint16_t*>(recording_buffer.data());
+        size_t sample_count = recording_buffer.size() / sizeof(uint16_t);
+        
+        LOG_INFO("Playing back {} samples of audio", sample_count);
+        vconn->voiceclient->send_audio_raw(audio_data, recording_buffer.size());
+    } else {
+        LOG_ERROR("No voice connection available for playback");
+        event.edit_response("Failed to play back audio: No voice connection available");
+    }
+    
+    // Clear the buffer after playback
+    recording_buffer.clear();
+}

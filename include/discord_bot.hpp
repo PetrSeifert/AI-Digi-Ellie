@@ -21,6 +21,10 @@ private:
     bool voice_connected;
     dpp::snowflake current_voice_channel;
 
+    std::vector<uint8_t> recording_buffer;
+    bool is_recording;
+    dpp::snowflake recording_user_id;
+
     void setupEvents();
     void handleMessage(const dpp::message_create_t& event);
     void registerCommands();
@@ -28,10 +32,10 @@ private:
     void clearCommand(const dpp::slashcommand_t& event);
     void shutdownCommand(const dpp::slashcommand_t& event);
     void joinVoiceCommand(const dpp::slashcommand_t& event);
+    void recordCommand(const dpp::slashcommand_t& event);
+    void stopRecordCommand(const dpp::slashcommand_t& event);
     
-    // TTS related methods
     void speakText(const std::string& text, dpp::snowflake channel_id);
     
-    // Audio conversion helper
     std::vector<uint16_t> convertTTSAudioFormat(const std::vector<uint8_t>& mono_24khz);
 }; 
