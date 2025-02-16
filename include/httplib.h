@@ -265,6 +265,8 @@ using socket_t = int;
 #include <unordered_set>
 #include <utility>
 
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
 #ifdef _WIN32
 #include <wincrypt.h>

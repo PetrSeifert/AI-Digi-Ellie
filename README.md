@@ -8,6 +8,7 @@ AI-Digi-Ellie is an AI-powered companion. She can operate in two modes:
 
 - AI-powered conversation capabilities
 - Discord integration using the D++ library
+- Text-to-Speech support using Azure Cognitive Services
 - Supports both Discord bot and console modes
 
 ## Requirements
@@ -16,6 +17,7 @@ AI-Digi-Ellie is an AI-powered companion. She can operate in two modes:
 - CMake 3.18 or higher
 - C++20 compatible compiler
 - Git (for cloning the repository)
+- OpenSSL (for secure connections)
 
 ### Dependencies
 The project uses the following libraries (included as submodules):
@@ -24,10 +26,21 @@ The project uses the following libraries (included as submodules):
 
 ## Configuration
 
-Before building the project, you need to modify the configuration in `include/config.hpp`:
+The project uses environment variables for configuration. Set the following variables before running:
 
-1. Set `MODEL_NAME` to the name of your Ollama model (default: "mistral")
-2. Set `DEFAULT_CHANNEL_ID` to your Discord channel ID where boot messages will be sent
+### Required Environment Variables
+- `DIGI_ELLIE_DISCORD_TOKEN` - Your Discord bot token
+- `DIGI_ELLIE_DEFAULT_CHANNEL_ID` - Discord channel ID for boot messages
+
+### Optional Environment Variables
+- `DIGI_ELLIE_MODEL_NAME` - Ollama model name (default: "mistral")
+
+### Text-to-Speech Configuration
+To enable TTS functionality, set these environment variables:
+- `DIGI_ELLIE_AZURE_TTS_KEY` - Your Azure Cognitive Services subscription key
+- `DIGI_ELLIE_AZURE_TTS_REGION` - Azure region (default: "germanywestcentral")
+- `DIGI_ELLIE_AZURE_TTS_VOICE` - Voice to use (default: "en-US-JennyNeural")
+- `DIGI_ELLIE_AZURE_TTS_APP_NAME` - Application name for Azure requests
 
 ## Building the Project
 
@@ -52,24 +65,43 @@ cd build; cmake ..; cd ..
 cmake --build build --config Release
 ```
 
-## Running the Bot
+## Prerequisites
 
-### Prerequisites
+### Ollama Setup
 1. Make sure Ollama is installed and running
 2. Ensure your chosen model is downloaded in Ollama (e.g., `ollama pull mistral`)
-3. Configure your Discord bot token and enable Message Content Intent in Discord Developer Portal
 
-### Discord Mode
-To run as a Discord bot, provide your Discord token as a command line argument:
+### Discord Setup
+1. Create a Discord application and bot in the Discord Developer Portal
+2. Enable Message Content Intent in the bot settings
+3. Add the bot to your server with appropriate permissions (text, voice)
+
+### Azure TTS Setup
+1. Create an Azure account and subscribe to Azure Cognitive Services
+2. Create a Speech Service resource in your preferred region
+3. Get your subscription key and region from the Azure portal
+4. Set the required environment variables
+
+## Running the Bot
+
+### Environment Setup
+Set the required environment variables:
 ```bash
-./AI-Digi-Ellie YOUR_DISCORD_TOKEN
+export DIGI_ELLIE_DISCORD_TOKEN="your_discord_token"
+export DIGI_ELLIE_DEFAULT_CHANNEL_ID="your_channel_id"
 ```
 
-### Console Mode
-To run in console mode, simply run the executable without any arguments:
+### Discord Mode
+To run as a Discord bot:
 ```bash
 ./AI-Digi-Ellie
 ```
+
+### Voice Commands
+Once the bot is running:
+1. Join a voice channel
+2. Use the `/joinvoice` command to make the bot join your channel
+3. The bot will now speak its responses using TTS
 
 ## Project Structure
 

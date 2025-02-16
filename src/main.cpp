@@ -3,6 +3,7 @@
 #include <map>
 #include <thread>
 #include <chrono>
+#include "config.hpp"
 #include "inference.hpp"
 #include "conversation.hpp"
 #include "system_control.hpp"
@@ -59,8 +60,8 @@ int main(int argc, char* argv[]) {
     }
 
     // Check if Discord token is provided and select mode
-    if (argc > 1) {
-        std::string discordToken = argv[1];
+    std::string discordToken = config::DISCORD_TOKEN;
+    if (!discordToken.empty()) {
         std::cout << "Starting in Discord mode...\n";
         
         try {

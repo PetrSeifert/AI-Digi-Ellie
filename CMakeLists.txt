@@ -6,6 +6,8 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(OpenSSL REQUIRED)
+
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/DPP)
 
@@ -13,10 +15,11 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(SOURCES
     src/main.cpp
-    src/inference.cpp
-    src/conversation.cpp
-    src/system_control.cpp
     src/discord_bot.cpp
+    src/conversation.cpp
+    src/inference.cpp
+    src/system_control.cpp
+    src/azure_tts.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -24,10 +27,13 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nlohmann_json::nlohmann_json
     dpp
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     vendor/DPP/include
+    ${OPENSSL_INCLUDE_DIR}
 )
 
 # Set output directory
@@ -44,17 +50,29 @@ if(WIN32)
     file(GLOB DPP_DLLS_RELEASE "${CMAKE_BINARY_DIR}/vendor/DPP/library/Release/*.dll")
     file(GLOB DPP_DLLS_LIB "${CMAKE_BINARY_DIR}/vendor/DPP/library/*.dll")
 
+    # Get OpenSSL DLL paths
+    get_filename_component(OPENSSL_ROOT_DIR ${OPENSSL_INCLUDE_DIR} DIRECTORY)
+    set(OPENSSL_DLLS
+        "${OPENSSL_ROOT_DIR}/bin/libssl-3-x64.dll"
+        "${OPENSSL_ROOT_DIR}/bin/libcrypto-3-x64.dll"
+    )
+
     # Copy DLLs after build
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     
-        # Copy DLLs from Release directory
+        # Copy DPP DLLs from Release directory
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${DPP_DLLS_RELEASE}
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
 
-        # Copy DLLs from library directory
+        # Copy DPP DLLs from library directory
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${DPP_DLLS_LIB}
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+
+        # Copy OpenSSL DLLs
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${OPENSSL_DLLS}
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
     )
 endif()

@@ -1,17 +1,23 @@
 #include "discord_bot.hpp"
 #include "conversation.hpp"
 #include "inference.hpp"
+#include "config.hpp"
 #include <iostream>
 #include <iomanip>
 #include <thread>
 #include <chrono>
 
-DiscordBot::DiscordBot(const std::string& token) : is_running(false) {
+DiscordBot::DiscordBot(const std::string& token) : is_running(false), voice_connected(false), current_voice_channel(0) {
     std::cout << "Creating Discord bot...\n";
     
     // Set up intents to receive message content and other required intents
     uint32_t intents = dpp::i_default_intents | dpp::i_message_content | dpp::i_guild_messages | dpp::i_direct_messages;
     bot = std::make_unique<dpp::cluster>(token, intents);
+    
+    // Initialize Azure TTS if key is provided
+    if (!config::AZURE_TTS_KEY.empty()) {
+        tts = std::make_unique<AzureTTS>(config::AZURE_TTS_KEY, config::AZURE_TTS_REGION);
+    }
     
     std::cout << "Bot instance created with intents: 0x" << std::hex << intents << std::dec << "\n";
     std::cout << "Make sure Message Content Intent is enabled in Discord Developer Portal!\n";
@@ -166,7 +172,9 @@ void DiscordBot::joinVoiceCommand(const dpp::slashcommand_t& event) {
         return;
     }
 
-    event.reply("Joining your voice channel!");
+    voice_connected = true;
+    current_voice_channel = event.command.channel_id;
+    event.reply("Joined your voice channel!");
 }
 
 void DiscordBot::handleMessage(const dpp::message_create_t& event) {
@@ -210,6 +218,11 @@ void DiscordBot::handleMessage(const dpp::message_create_t& event) {
 
     // Send the response back to Discord
     if (!ellieResponse.empty()) {
+        // If we're in a voice channel and TTS is enabled, speak the response
+        if (voice_connected && tts && current_voice_channel) {
+            speakText(ellieResponse, event.msg.guild_id);
+        }
+
         // Split long messages if they exceed Discord's limit
         const size_t MAX_MESSAGE_LENGTH = 2000;
         if (ellieResponse.length() > MAX_MESSAGE_LENGTH) {
@@ -223,6 +236,62 @@ void DiscordBot::handleMessage(const dpp::message_create_t& event) {
             bot->message_create(dpp::message(event.msg.channel_id, ellieResponse));
         }
     }
+}
+
+void DiscordBot::speakText(const std::string& text, dpp::snowflake guild_id) {
+    if (!tts) {
+        std::cout << "TTS not initialized - missing Azure key\n";
+        return;
+    }
+
+    try {
+        // Convert text to speech
+        std::vector<uint8_t> audio_data = tts->textToSpeech(text, config::AZURE_TTS_VOICE);
+        
+        // Get voice connection for the guild
+        if (auto vconn = bot->get_shard(0)->get_voice(guild_id)) {
+            // Convert audio format and send
+            std::vector<uint16_t> stereo_data = convertTTSAudioFormat(audio_data);
+            vconn->voiceclient->send_audio_raw(stereo_data.data(), stereo_data.size() * sizeof(uint16_t));
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error in TTS: " << e.what() << std::endl;
+    }
+}
+
+std::vector<uint16_t> DiscordBot::convertTTSAudioFormat(const std::vector<uint8_t>& mono_24khz) {
+    // Convert from 24kHz mono to 48kHz stereo
+    std::vector<uint16_t> stereo_data;
+    const int16_t* mono_samples = reinterpret_cast<const int16_t*>(mono_24khz.data());
+    size_t num_samples = mono_24khz.size() / sizeof(int16_t);
+    
+    // Reserve space for stereo 48kHz data (2 channels, 2x sample rate)
+    stereo_data.reserve(num_samples * 4);
+    
+    // Simple linear interpolation for upsampling
+    for (size_t i = 0; i < num_samples - 1; i++) {
+        // Get two adjacent samples for interpolation
+        int16_t current = mono_samples[i];
+        int16_t next = mono_samples[i + 1];
+        
+        // Add first sample (duplicate for stereo)
+        stereo_data.push_back(static_cast<uint16_t>(current));
+        stereo_data.push_back(static_cast<uint16_t>(current));
+        
+        // Add interpolated sample (duplicate for stereo)
+        int16_t interpolated = (current + next) / 2;
+        stereo_data.push_back(static_cast<uint16_t>(interpolated));
+        stereo_data.push_back(static_cast<uint16_t>(interpolated));
+    }
+    
+    // Add the last sample
+    stereo_data.push_back(static_cast<uint16_t>(mono_samples[num_samples - 1]));
+    stereo_data.push_back(static_cast<uint16_t>(mono_samples[num_samples - 1]));
+    
+    std::cout << "Converted " << num_samples << " mono samples to " 
+              << stereo_data.size() << " stereo samples" << std::endl;
+    
+    return stereo_data;
 }
 
 void DiscordBot::start() {

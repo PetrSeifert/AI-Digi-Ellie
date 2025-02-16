@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include "config.hpp"
+#include "azure_tts.hpp"
 
 class DiscordBot {
 public:
@@ -14,6 +15,12 @@ public:
     bool isRunning() const { return is_running; }
 
 private:
+    bool is_running;
+    std::unique_ptr<dpp::cluster> bot;
+    std::unique_ptr<AzureTTS> tts;
+    bool voice_connected;
+    dpp::snowflake current_voice_channel;
+
     void setupEvents();
     void handleMessage(const dpp::message_create_t& event);
     void registerCommands();
@@ -22,6 +29,9 @@ private:
     void shutdownCommand(const dpp::slashcommand_t& event);
     void joinVoiceCommand(const dpp::slashcommand_t& event);
     
-    std::unique_ptr<dpp::cluster> bot;
-    bool is_running;
+    // TTS related methods
+    void speakText(const std::string& text, dpp::snowflake channel_id);
+    
+    // Audio conversion helper
+    std::vector<uint16_t> convertTTSAudioFormat(const std::vector<uint8_t>& mono_24khz);
 }; 
