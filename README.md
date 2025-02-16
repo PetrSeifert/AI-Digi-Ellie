@@ -23,6 +23,7 @@ AI-Digi-Ellie is an AI-powered companion. She can operate in two modes:
 The project uses the following libraries (included as submodules):
 - [D++](https://github.com/brainboxdotcc/DPP) - A lightweight C++ Discord library
 - [nlohmann/json](https://github.com/nlohmann/json) - JSON for Modern C++
+- [spdlog](https://github.com/gabime/spdlog) - Fast C++ logging library
 
 ## Configuration
 
