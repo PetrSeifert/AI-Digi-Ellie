@@ -11,6 +11,7 @@ find_package(OpenSSL REQUIRED)
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/DPP)
 add_subdirectory(vendor/spdlog)
+add_subdirectory(vendor/cpp-httplib)
 
 set(SOURCES
     src/main.cpp
@@ -34,12 +35,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
     spdlog::spdlog
+    httplib::httplib
 )
     
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/vendor/DPP/include
     ${PROJECT_SOURCE_DIR}/vendor/spdlog/include
+    ${PROJECT_SOURCE_DIR}/vendor/cpp-httplib
     ${OPENSSL_INCLUDE_DIR}
 )
 

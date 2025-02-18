@@ -1,0 +1,9 @@
+#pragma once
+
+#ifndef CPPHTTPLIB_OPENSSL_SUPPORT
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#endif
+
+#ifndef HTTPLIB_OPENSSL_VERSION_3_0
+#define HTTPLIB_OPENSSL_VERSION_3_0
+#endif 

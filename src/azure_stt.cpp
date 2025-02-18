@@ -1,4 +1,5 @@
 #include "azure_stt.hpp"
+#include "httplib_config.hpp"
 #include <httplib.h>
 #include <chrono>
 #include <nlohmann/json.hpp>

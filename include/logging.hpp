@@ -12,6 +12,7 @@
 
 namespace logging {
 
+#ifdef _WIN32
     // Windows console color codes
     namespace colors {
         constexpr uint16_t WHITE = 0x0007;
@@ -21,6 +22,17 @@ namespace logging {
         constexpr uint16_t RED = 0x0004;
         constexpr uint16_t BRIGHT_RED = 0x000C;
     }
+#else
+    // Linux ANSI color codes
+    namespace colors {
+        const std::string WHITE = "\033[37m";
+        const std::string CYAN = "\033[36m";
+        const std::string GREEN = "\033[32m";
+        const std::string YELLOW = "\033[33m";
+        const std::string RED = "\033[31m";
+        const std::string BRIGHT_RED = "\033[91m";
+    }
+#endif
 
     inline void init() {
         try {

@@ -16,17 +16,16 @@ using json = nlohmann::json;
 
 static bool g_initialized = false;
 static std::unique_ptr<httplib::Client> g_client;
-static const char* OLLAMA_HOST = "localhost";
 static const int OLLAMA_PORT = 11434;
 
 bool initializeModel() {
     try {
-        g_client = std::make_unique<httplib::Client>(OLLAMA_HOST, OLLAMA_PORT);
+        g_client = std::make_unique<httplib::Client>(config::OLLAMA_HOST, OLLAMA_PORT);
         
         // Test connection and check if model exists
         auto response = g_client->Get("/api/tags");
         if (!response || response->status != 200) {
-            LOG_CRITICAL("Failed to connect to Ollama server at {} : {}", OLLAMA_HOST, OLLAMA_PORT);
+            LOG_CRITICAL("Failed to connect to Ollama server at {} : {}", config::OLLAMA_HOST, OLLAMA_PORT);
             return false;
         }
 

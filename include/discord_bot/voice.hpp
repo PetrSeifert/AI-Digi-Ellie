@@ -58,7 +58,7 @@ namespace discord {
         std::atomic<bool> should_stop_silence_detection;
         std::mutex audio_states_mutex;
         
-        static constexpr std::chrono::milliseconds SILENCE_THRESHOLD{3000};
+        static constexpr std::chrono::milliseconds SILENCE_THRESHOLD{1000};
         static constexpr std::chrono::milliseconds SILENCE_CHECK_INTERVAL{100};
         static constexpr size_t MIN_AUDIO_SIZE{32000}; // Minimum audio size to process (about 0.2s at 48kHz stereo)
     };

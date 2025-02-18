@@ -18,13 +18,14 @@ AI-Digi-Ellie is an AI-powered companion. She can operate in two modes:
 - CMake 3.18 or higher
 - C++20 compatible compiler
 - Git (for cloning the repository)
-- OpenSSL (for secure connections)
+- OpenSSL 3.0 or higher (for secure connections)
 
 ### Dependencies
 The project uses the following libraries (included as submodules):
 - [D++](https://github.com/brainboxdotcc/DPP) - A lightweight C++ Discord library
 - [nlohmann/json](https://github.com/nlohmann/json) - JSON for Modern C++
 - [spdlog](https://github.com/gabime/spdlog) - Fast C++ logging library
+- [cpp-httplib](https://github.com/yhirose/cpp-httplib) - A C++ HTTP/HTTPS client library
 
 ## Configuration
 
@@ -46,9 +47,9 @@ To enable TTS and STT functionality, set these environment variables:
 
 ## Building the Project
 
-1. Clone the repository:
+1. Clone the repository with submodules:
 ```bash
-git clone https://github.com/yourusername/AI-Digi-Ellie.git
+git clone --recursive https://github.com/yourusername/AI-Digi-Ellie.git
 cd AI-Digi-Ellie
 ```
 
@@ -69,9 +70,15 @@ cmake --build build --config Release
 
 ## Prerequisites
 
+### OpenSSL Setup
+1. Ensure OpenSSL 3.0 or higher is installed on your system
+2. Make sure the OpenSSL development libraries are available
+3. On Windows, ensure OpenSSL DLLs are in your system PATH
+
 ### Ollama Setup
 1. Make sure Ollama is installed and running
 2. Ensure your chosen model is downloaded in Ollama (e.g., `ollama pull mistral`)
+3. Set the `DIGI_ELLIE_OLLAMA_HOST` environment variable to the host of your Ollama server (default: "localhost")
 
 ### Discord Setup
 1. Create a Discord application and bot in the Discord Developer Portal
@@ -82,7 +89,7 @@ cmake --build build --config Release
 1. Create an Azure account and subscribe to Azure Cognitive Services
 2. Create a Speech Service resource in your preferred region
 3. Get your subscription key and region from the Azure portal
-4. Set the required environment variables for TTS and/or STT
+4. Set the required environment variables for TTS and STT
 
 ## Running the Bot
 
@@ -96,7 +103,7 @@ export DIGI_ELLIE_AZURE_SPEECH_KEY="your_azure_speech_key"
 
 ### Start the bot
 ```bash
-./AI-Digi-Ellie
+./build/bin/AI-Digi-Ellie
 ```
 
 ### Voice Commands
@@ -113,6 +120,7 @@ Once the bot is running:
   - `DPP/` - D++ Discord library
   - `json/` - nlohmann/json library
   - `spdlog/` - spdlog logging library
+  - `cpp-httplib/` - HTTP/HTTPS client library
 
 ## License
 
