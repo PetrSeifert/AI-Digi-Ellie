@@ -8,6 +8,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenSSL REQUIRED)
 
+# Add Speech SDK
+set(SPEECHSDK_ROOT "${CMAKE_SOURCE_DIR}/vendor/speechsdk")
+set(SPEECHSDK_CXX_INCLUDE_DIR "${SPEECHSDK_ROOT}/include/cxx_api")
+set(SPEECHSDK_C_INCLUDE_DIR "${SPEECHSDK_ROOT}/include/c_api")
+set(SPEECHSDK_LIB_DIR "${SPEECHSDK_ROOT}/lib/x64")
+
 add_subdirectory(vendor/json)
 add_subdirectory(vendor/DPP)
 add_subdirectory(vendor/spdlog)
@@ -36,6 +42,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     OpenSSL::Crypto
     spdlog::spdlog
     httplib::httplib
+    "${SPEECHSDK_LIB_DIR}/libMicrosoft.CognitiveServices.Speech.core.so"
 )
     
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -44,6 +51,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${PROJECT_SOURCE_DIR}/vendor/spdlog/include
     ${PROJECT_SOURCE_DIR}/vendor/cpp-httplib
     ${OPENSSL_INCLUDE_DIR}
+    ${SPEECHSDK_CXX_INCLUDE_DIR}
+    ${SPEECHSDK_C_INCLUDE_DIR}
 )
 
 # Set output directory
@@ -64,6 +73,9 @@ if(WIN32)
     # Get OpenSSL DLL paths
     get_filename_component(OPENSSL_ROOT_DIR ${OPENSSL_INCLUDE_DIR} DIRECTORY)
     file(GLOB OPENSSL_DLLS "${OPENSSL_ROOT_DIR}/bin/*.dll")
+
+    # Get Speech SDK DLLs
+    file(GLOB SPEECHSDK_DLLS "${SPEECHSDK_LIB_DIR}/*.dll")
 
     # Copy DLLs after build
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -86,6 +98,11 @@ if(WIN32)
         # Copy spdlog DLLs
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${SPDLOG_DLLS}
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+
+        # Copy Speech SDK DLLs
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${SPEECHSDK_DLLS}
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
     )
 endif()

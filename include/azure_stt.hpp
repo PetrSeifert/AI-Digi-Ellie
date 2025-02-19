@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include <speechapi_cxx.h>
 
 class AzureSTT {
 public:
@@ -13,11 +14,6 @@ public:
     std::string audioToText(const std::vector<uint8_t>& audio_data);
 
 private:
-    std::string subscription_key;
-    std::string region;
-    std::string access_token;
-    int64_t token_expiry;
-
-    void refreshToken();
-    std::string getAccessToken();
+    std::shared_ptr<Microsoft::CognitiveServices::Speech::SpeechConfig> speech_config;
+    std::shared_ptr<Microsoft::CognitiveServices::Speech::SpeechRecognizer> recognizer;
 }; 
