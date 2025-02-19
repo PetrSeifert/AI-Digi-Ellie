@@ -210,7 +210,7 @@ namespace discord {
             return;
         }
 
-        voice_connected = true;
+        /*voice_connected = true;
         
         // Initialize states for all users in the voice channel
         {
@@ -226,7 +226,7 @@ namespace discord {
             }
         }
         
-        startSilenceDetectionTimer();
+        startSilenceDetectionTimer();*/
         event.reply("Joined your voice channel! I will now transcribe speech automatically when there are pauses in conversation.");
     }
 

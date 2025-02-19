@@ -1,0 +1,396 @@
+[2025-02-19 12:04:03.240] [info] [main.cpp:69] Digi-Ellie starting up
+[2025-02-19 12:04:03.246] [info] [inference.cpp:33] Connected to Ollama server successfully!
+[2025-02-19 12:04:03.247] [info] [main.cpp:75] Model initialized successfully
+[2025-02-19 12:04:03.247] [info] [main.cpp:80] Discord token found, starting in Discord mode
+[2025-02-19 12:04:03.247] [info] [main.cpp:81] Starting in Discord mode...
+[2025-02-19 12:04:03.247] [info] [discord_bot.cpp:6] Creating Discord bot...
+[2025-02-19 12:04:03.247] [info] [core.cpp:10] Creating Discord bot core...
+[2025-02-19 12:04:03.247] [info] [core.cpp:16] Bot instance created with intents: 0x31fefd
+[2025-02-19 12:04:03.248] [info] [core.cpp:17] Make sure Message Content Intent is enabled in Discord Developer Portal!
+[2025-02-19 12:04:03.248] [info] [discord_bot.cpp:16] Core bot module initialized. Waiting for ready event...
+[2025-02-19 12:04:03.248] [info] [core.cpp:72] Starting Discord bot core...
+[2025-02-19 12:04:03.540] [debug] [core.cpp:63] Cluster: 995 of 1000 session starts remaining
+[2025-02-19 12:04:03.540] [info] [core.cpp:65] Auto Shard: Bot requires 1 shard
+[2025-02-19 12:04:03.540] [debug] [core.cpp:63] Starting with 1 shards...
+[2025-02-19 12:04:04.197] [debug] [core.cpp:63] Connecting new session...
+[2025-02-19 12:04:04.198] [info] [core.cpp:65] W: {"d":{"compress":false,"intents":3276541,"large_threshold":250,"properties":{"browser":"D++","device":"D++","os":"Windows"},"shard":[0,1],"token":"*****"},"op":2}
+[2025-02-19 12:04:04.407] [info] [core.cpp:65] Shard id 0 (1/1) ready!
+[2025-02-19 12:04:04.416] [debug] [core.cpp:63] Resume URL for session 0527d5567d6411e980c5a34867509337 is wss://gateway-us-east1-b.discord.gg (host: gateway-us-east1-b.discord.gg)
+[2025-02-19 12:04:04.416] [info] [core.cpp:38] === Bot Ready Event ===
+[2025-02-19 12:04:04.417] [info] [core.cpp:39] Logged in as: Digi-Ellie
+[2025-02-19 12:04:04.417] [info] [core.cpp:40] Bot ID: 1340298517784035419
+[2025-02-19 12:04:04.417] [info] [core.cpp:41] =====================
+[2025-02-19 12:04:06.741] [info] [discord_bot.cpp:20] Initializing bot modules...
+[2025-02-19 12:04:06.742] [info] [azure_stt.cpp:23] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:04:06.745] [info] [azure_stt.cpp:26] Using SSL for connection
+[2025-02-19 12:04:06.745] [info] [azure_stt.cpp:38] Requesting token...
+[2025-02-19 12:04:06.938] [info] [azure_stt.cpp:44] Got response with status: 200
+[2025-02-19 12:04:06.939] [info] [azure_stt.cpp:51] Token refreshed successfully
+[2025-02-19 12:04:06.939] [info] [voice.cpp:18] STT module initialized with Azure credentials
+[2025-02-19 12:04:06.939] [info] [azure_tts.cpp:21] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:04:06.939] [info] [azure_tts.cpp:24] Using SSL for connection
+[2025-02-19 12:04:06.939] [info] [azure_tts.cpp:36] Requesting token...
+[2025-02-19 12:04:07.109] [info] [azure_tts.cpp:43] Got response with status: 200
+[2025-02-19 12:04:07.109] [info] [azure_tts.cpp:50] Token refreshed successfully
+[2025-02-19 12:04:07.110] [info] [voice.cpp:26] TTS module initialized with Azure credentials
+[2025-02-19 12:04:07.110] [info] [commands.cpp:42] Registering 3 commands for application ID: 1340298517784035419
+[2025-02-19 12:04:07.110] [info] [discord_bot.cpp:34] Bot modules initialized successfully.
+[2025-02-19 12:04:07.729] [info] [commands.cpp:48] Successfully registered 3 slash commands.
+[2025-02-19 12:04:09.009] [debug] [core.cpp:63] Shards started.
+[2025-02-19 12:04:13.258] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626144546488350
+[2025-02-19 12:04:13.258] [info] [voice.cpp:49] Started silence detection timer
+[2025-02-19 12:04:14.265] [info] [core.cpp:65] W: {"d":{"channel_id":"829626144546488350","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:04:14.506] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626144546488350
+[2025-02-19 12:04:14.592] [info] [core.cpp:65] R: {"op":8,"d":{"v":8,"heartbeat_interval":13750}}
+[2025-02-19 12:04:14.592] [debug] [core.cpp:63] Connecting new voice session (DAVE: Disabled)...
+[2025-02-19 12:04:14.593] [info] [core.cpp:65] W: {"d":{"max_dave_protocol_version":0,"server_id":"829618674612305932","session_id":"0527d5567d6411e980c5a34867509337","token":"b8b6f441422d8a53","user_id":"1340298517784035419"},"op":0}
+[2025-02-19 12:04:14.612] [info] [core.cpp:65] R: {"op":2,"d":{"streams":[{"type":"video","ssrc":77977,"rtx_ssrc":77978,"rid":"","quality":0,"active":false}],"ssrc":77976,"port":50018,"modes":["aead_aes256_gcm_rtpsize","aead_aes256_gcm","aead_xchacha20_poly1305_rtpsize","xsalsa20_poly1305_lite_rtpsize","xsalsa20_poly1305_lite","xsalsa20_poly1305_suffix","xsalsa20_poly1305"],"ip":"66.22.243.42","experiments":["fixed_keyframe_interval"]}}
+[2025-02-19 12:04:14.612] [debug] [core.cpp:63] Voice websocket established; UDP endpoint: 66.22.243.42:50018 [ssrc=77976] with 7 modes
+[2025-02-19 12:04:14.628] [info] [core.cpp:65] W: {"d":{"data":{"address":"89.24.228.162","mode":"aead_xchacha20_poly1305_rtpsize","port":54638},"protocol":"udp"},"op":1}
+[2025-02-19 12:04:14.628] [info] [core.cpp:65] R: {"seq":0,"op":11,"d":{"user_ids":["333647996162146304"]}}
+[2025-02-19 12:04:14.629] [debug] [core.cpp:63] New of clients in voice channel: 1 total is 1
+[2025-02-19 12:04:14.629] [info] [core.cpp:65] R: {"seq":1,"op":18,"d":{"user_id":"333647996162146304","flags":2}}
+[2025-02-19 12:04:14.629] [info] [core.cpp:65] R: {"seq":2,"op":20,"d":{"user_id":"333647996162146304","platform":0}}
+[2025-02-19 12:04:14.648] [info] [core.cpp:65] R: {"op":4,"d":{"video_codec":"H264","secure_frames_version":0,"secret_key":[156,54,173,224,94,5,159,159,127,125,62,247,57,241,164,64,58,211,187,115,11,209,172,202,34,221,25,161,16,117,35,20],"mode":"aead_xchacha20_poly1305_rtpsize","media_session_id":"cf9ded45ca0d9d213cf5f3ed583f7881","dave_protocol_version":0,"audio_codec":"opus"}}
+[2025-02-19 12:04:14.648] [info] [core.cpp:65] R: {"seq":3,"op":15,"d":{"any":100}}
+[2025-02-19 12:04:15.000] [info] [core.cpp:65] W: {"d":{"delay":0,"speaking":1,"ssrc":77976},"op":5}
+[2025-02-19 12:04:15.325] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.325] [info] [azure_stt.cpp:153] Started STT streaming
+[2025-02-19 12:04:15.325] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.326] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.326] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.326] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.326] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.326] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.326] [info] [azure_stt.cpp:76] Connecting to STT service: germanywestcentral.stt.speech.microsoft.com
+[2025-02-19 12:04:15.327] [info] [azure_stt.cpp:79] Using SSL for STT connection
+[2025-02-19 12:04:15.327] [debug] [azure_stt.cpp:95] Request Headers:
+[2025-02-19 12:04:15.327] [debug] [azure_stt.cpp:98] Content-Type: audio/wav; codecs=audio/pcm; samplerate=48000
+[2025-02-19 12:04:15.327] [debug] [azure_stt.cpp:98] Accept: application/json
+[2025-02-19 12:04:15.327] [info] [azure_stt.cpp:102] Sending STT request with 11520 bytes of audio data...
+[2025-02-19 12:04:15.575] [info] [azure_stt.cpp:111] Got STT response with status: 200
+[2025-02-19 12:04:15.576] [debug] [azure_stt.cpp:112] Response Headers:
+[2025-02-19 12:04:15.576] [debug] [azure_stt.cpp:114] Content-Length: 78
+[2025-02-19 12:04:15.576] [debug] [azure_stt.cpp:114] Strict-Transport-Security: max-age=31536000; includeSubDomains
+[2025-02-19 12:04:15.576] [debug] [azure_stt.cpp:114] Connection: close
+[2025-02-19 12:04:15.576] [debug] [azure_stt.cpp:114] Date: Wed, 19 Feb 2025 11:04:15 GMT
+[2025-02-19 12:04:15.576] [debug] [azure_stt.cpp:114] Content-Type: application/json; charset=utf-8
+[2025-02-19 12:04:15.577] [debug] [azure_stt.cpp:114] Server: Kestrel
+[2025-02-19 12:04:15.577] [info] [azure_stt.cpp:122] Successfully transcribed audio to text: 
+[2025-02-19 12:04:15.577] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.577] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.577] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.577] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.578] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.578] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.578] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.578] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.578] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.578] [info] [azure_stt.cpp:76] Connecting to STT service: germanywestcentral.stt.speech.microsoft.com
+[2025-02-19 12:04:15.579] [info] [azure_stt.cpp:79] Using SSL for STT connection
+[2025-02-19 12:04:15.579] [debug] [azure_stt.cpp:95] Request Headers:
+[2025-02-19 12:04:15.579] [debug] [azure_stt.cpp:98] Content-Type: audio/wav; codecs=audio/pcm; samplerate=48000
+[2025-02-19 12:04:15.579] [debug] [azure_stt.cpp:98] Accept: application/json
+[2025-02-19 12:04:15.579] [info] [azure_stt.cpp:102] Sending STT request with 11520 bytes of audio data...
+[2025-02-19 12:04:15.762] [info] [azure_stt.cpp:111] Got STT response with status: 200
+[2025-02-19 12:04:15.762] [debug] [azure_stt.cpp:112] Response Headers:
+[2025-02-19 12:04:15.762] [debug] [azure_stt.cpp:114] Content-Length: 78
+[2025-02-19 12:04:15.762] [debug] [azure_stt.cpp:114] Strict-Transport-Security: max-age=31536000; includeSubDomains
+[2025-02-19 12:04:15.762] [debug] [azure_stt.cpp:114] Connection: close
+[2025-02-19 12:04:15.763] [debug] [azure_stt.cpp:114] Date: Wed, 19 Feb 2025 11:04:15 GMT
+[2025-02-19 12:04:15.763] [debug] [azure_stt.cpp:114] Content-Type: application/json; charset=utf-8
+[2025-02-19 12:04:15.763] [debug] [azure_stt.cpp:114] Server: Kestrel
+[2025-02-19 12:04:15.763] [info] [azure_stt.cpp:122] Successfully transcribed audio to text: 
+[2025-02-19 12:04:15.763] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.763] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.764] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.764] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.764] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.764] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.764] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:04:15.764] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:04:15.765] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:04:15.765] [info] [azure_stt.cpp:76] Connecting to STT service: germanywestcentral.stt.speech.microsoft.com
+[2025-02-19 12:04:15.765] [info] [azure_stt.cpp:79] Using SSL for STT connection
+[2025-02-19 12:04:15.765] [debug] [azure_stt.cpp:95] Request Headers:
+[2025-02-19 12:04:15.765] [debug] [azure_stt.cpp:98] Content-Type: audio/wav; codecs=audio/pcm; samplerate=48000
+[2025-02-19 12:04:15.765] [debug] [azure_stt.cpp:98] Accept: application/json
+[2025-02-19 12:04:15.765] [info] [azure_stt.cpp:102] Sending STT request with 11520 bytes of audio data...
+[2025-02-19 12:04:15.965] [info] [azure_stt.cpp:111] Got STT response with status: 200
+[2025-02-19 12:04:15.965] [debug] [azure_stt.cpp:112] Response Headers:
+[2025-02-19 12:04:15.966] [debug] [azure_stt.cpp:114] Content-Length: 78
+[2025-02-19 12:04:15.966] [debug] [azure_stt.cpp:114] Strict-Transport-Security: max-age=31536000; includeSubDomains
+[2025-02-19 12:04:15.966] [debug] [azure_stt.cpp:114] Connection: close
+[2025-02-19 12:04:15.966] [debug] [azure_stt.cpp:114] Date: Wed, 19 Feb 2025 11:04:16 GMT
+[2025-02-19 12:04:15.966] [debug] [azure_stt.cpp:114] Content-T[2025-02-19 12:05:43.232] [info] [main.cpp:69] Digi-Ellie starting up
+[2025-02-19 12:05:43.239] [info] [inference.cpp:33] Connected to Ollama server successfully!
+[2025-02-19 12:05:43.240] [info] [main.cpp:75] Model initialized successfully
+[2025-02-19 12:05:43.240] [info] [main.cpp:80] Discord token found, starting in Discord mode
+[2025-02-19 12:05:43.240] [info] [main.cpp:81] Starting in Discord mode...
+[2025-02-19 12:05:43.240] [info] [discord_bot.cpp:6] Creating Discord bot...
+[2025-02-19 12:05:43.240] [info] [core.cpp:10] Creating Discord bot core...
+[2025-02-19 12:05:43.241] [info] [core.cpp:16] Bot instance created with intents: 0x31fefd
+[2025-02-19 12:05:43.241] [info] [core.cpp:17] Make sure Message Content Intent is enabled in Discord Developer Portal!
+[2025-02-19 12:05:43.241] [info] [discord_bot.cpp:16] Core bot module initialized. Waiting for ready event...
+[2025-02-19 12:05:43.242] [info] [core.cpp:72] Starting Discord bot core...
+[2025-02-19 12:05:43.535] [debug] [core.cpp:63] Cluster: 994 of 1000 session starts remaining
+[2025-02-19 12:05:43.535] [info] [core.cpp:65] Auto Shard: Bot requires 1 shard
+[2025-02-19 12:05:43.535] [debug] [core.cpp:63] Starting with 1 shards...
+[2025-02-19 12:05:44.011] [debug] [core.cpp:63] Connecting new session...
+[2025-02-19 12:05:44.012] [info] [core.cpp:65] W: {"d":{"compress":false,"intents":3276541,"large_threshold":250,"properties":{"browser":"D++","device":"D++","os":"Windows"},"shard":[0,1],"token":"*****"},"op":2}
+[2025-02-19 12:05:44.207] [info] [core.cpp:65] Shard id 0 (1/1) ready!
+[2025-02-19 12:05:44.207] [debug] [core.cpp:63] Resume URL for session f1ebc96bc8dc601183b629785f50cb77 is wss://gateway-us-east1-b.discord.gg (host: gateway-us-east1-b.discord.gg)
+[2025-02-19 12:05:44.207] [info] [core.cpp:38] === Bot Ready Event ===
+[2025-02-19 12:05:44.208] [info] [core.cpp:39] Logged in as: Digi-Ellie
+[2025-02-19 12:05:44.208] [info] [core.cpp:40] Bot ID: 1340298517784035419
+[2025-02-19 12:05:44.208] [info] [core.cpp:41] =====================
+[2025-02-19 12:05:46.847] [info] [discord_bot.cpp:20] Initializing bot modules...
+[2025-02-19 12:05:46.847] [info] [azure_stt.cpp:23] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:05:46.849] [info] [azure_stt.cpp:26] Using SSL for connection
+[2025-02-19 12:05:46.850] [info] [azure_stt.cpp:38] Requesting token...
+[2025-02-19 12:05:47.033] [info] [azure_stt.cpp:44] Got response with status: 200
+[2025-02-19 12:05:47.033] [info] [azure_stt.cpp:51] Token refreshed successfully
+[2025-02-19 12:05:47.034] [info] [voice.cpp:18] STT module initialized with Azure credentials
+[2025-02-19 12:05:47.034] [info] [azure_tts.cpp:21] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:05:47.034] [info] [azure_tts.cpp:24] Using SSL for connection
+[2025-02-19 12:05:47.034] [info] [azure_tts.cpp:36] Requesting token...
+[2025-02-19 12:05:47.252] [info] [azure_tts.cpp:43] Got response with status: 200
+[2025-02-19 12:05:47.252] [info] [azure_tts.cpp:50] Token refreshed successfully
+[2025-02-19 12:05:47.252] [info] [voice.cpp:26] TTS module initialized with Azure credentials
+[2025-02-19 12:05:47.252] [info] [commands.cpp:42] Registering 3 commands for application ID: 1340298517784035419
+[2025-02-19 12:05:47.253] [info] [discord_bot.cpp:34] Bot modules initialized successfully.
+[2025-02-19 12:05:47.652] [info] [commands.cpp:48] Successfully registered 3 slash commands.
+[2025-02-19 12:05:48.813] [debug] [core.cpp:63] Shards started.
+[2025-02-19 12:05:50.633] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:05:50.633] [info] [voice.cpp:49] Started silence detection timer
+[2025-02-19 12:05:51.634] [info] [core.cpp:65] W: {"d":{"channel_id":"829626099826819072","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:05:51.871] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:05:51.966] [info] [core.cpp:65] R: {"op":8,"d":{"v":8,"heartbeat_interval":13750}}
+[2025-02-19 12:05:51.966] [debug] [core.cpp:63] Connecting new voice session (DAVE: Disabled)...
+[2025-02-19 12:05:51.967] [info] [core.cpp:65] W: {"d":{"max_dave_protocol_version":0,"server_id":"829618674612305932","session_id":"f1ebc96bc8dc601183b629785f50cb77","token":"dcb9007d76066aed","user_id":"1340298517784035419"},"op":0}
+[2025-02-19 12:05:51.987] [info] [core.cpp:65] R: {"op":2,"d":{"streams":[{"type":"video","ssrc":69250,"rtx_ssrc":69251,"rid":"","quality":0,"active":false}],"ssrc":69249,"port":50017,"modes":["aead_aes256_gcm_rtpsize","aead_aes256_gcm","aead_xchacha20_poly1305_rtpsize","xsalsa20_poly1305_lite_rtpsize","xsalsa20_poly1305_lite","xsalsa20_poly1305_suffix","xsalsa20_poly1305"],"ip":"66.22.243.16","experiments":["fixed_keyframe_interval"]}}
+[2025-02-19 12:05:51.987] [debug] [core.cpp:63] Voice websocket established; UDP endpoint: 66.22.243.16:50017 [ssrc=69249] with 7 modes
+[2025-02-19 12:05:52.003] [info] [core.cpp:65] W: {"d":{"data":{"address":"89.24.228.162","mode":"aead_xchacha20_poly1305_rtpsize","port":63303},"protocol":"udp"},"op":1}
+[2025-02-19 12:05:52.004] [info] [core.cpp:65] R: {"seq":0,"op":11,"d":{"user_ids":["333647996162146304"]}}
+[2025-02-19 12:05:52.004] [debug] [core.cpp:63] New of clients in voice channel: 1 total is 1
+[2025-02-19 12:05:52.004] [info] [core.cpp:65] R: {"seq":1,"op":18,"d":{"user_id":"333647996162146304","flags":2}}
+[2025-02-19 12:05:52.004] [info] [core.cpp:65] R: {"seq":2,"op":20,"d":{"user_id":"333647996162146304","platform":0}}
+[2025-02-19 12:05:52.021] [info] [core.cpp:65] R: {"op":4,"d":{"video_codec":"H264","secure_frames_version":0,"secret_key":[103,217,111,196,202,153,222,136,120,167,190,118,160,208,51,18,66,2,47,21,234,191,177,159,189,78,111,96,106,29,166,5],"mode":"aead_xchacha20_poly1305_rtpsize","media_session_id":"66a2101efe94ec106de3027531a7c38d","dave_protocol_version":0,"audio_codec":"opus"}}
+[2025-02-19 12:05:52.022] [info] [core.cpp:65] R: {"seq":3,"op":15,"d":{"any":100}}
+[2025-02-19 12:05:52.723] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:52.724] [info] [azure_stt.cpp:153] Started STT streaming
+[2025-02-19 12:05:52.724] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:52.724] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:52.724] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:52.724] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:52.725] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:52.725] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:52.725] [info] [azure_stt.cpp:76] Connecting to STT service: germanywestcentral.stt.speech.microsoft.com
+[2025-02-19 12:05:52.725] [info] [azure_stt.cpp:79] Using SSL for STT connection
+[2025-02-19 12:05:52.725] [debug] [azure_stt.cpp:95] Request Headers:
+[2025-02-19 12:05:52.725] [debug] [azure_stt.cpp:98] Content-Type: audio/wav; codecs=audio/pcm; samplerate=48000
+[2025-02-19 12:05:52.726] [debug] [azure_stt.cpp:98] Accept: application/json
+[2025-02-19 12:05:52.726] [info] [azure_stt.cpp:102] Sending STT request with 11520 bytes of audio data...
+[2025-02-19 12:05:52.970] [info] [azure_stt.cpp:111] Got STT response with status: 200
+[2025-02-19 12:05:52.970] [debug] [azure_stt.cpp:112] Response Headers:
+[2025-02-19 12:05:52.970] [debug] [azure_stt.cpp:114] Content-Length: 78
+[2025-02-19 12:05:52.971] [debug] [azure_stt.cpp:114] Strict-Transport-Security: max-age=31536000; includeSubDomains
+[2025-02-19 12:05:52.971] [debug] [azure_stt.cpp:114] Connection: close
+[2025-02-19 12:05:52.971] [debug] [azure_stt.cpp:114] Date: Wed, 19 Feb 2025 11:05:53 GMT
+[2025-02-19 12:05:52.971] [debug] [azure_stt.cpp:114] Content-Type: application/json; charset=utf-8
+[2025-02-19 12:05:52.971] [debug] [azure_stt.cpp:114] Server: Kestrel
+[2025-02-19 12:05:52.971] [info] [azure_stt.cpp:122] Successfully transcribed audio to text: 
+[2025-02-19 12:05:52.971] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:52.972] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:52.972] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:52.972] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:52.972] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:52.972] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:52.972] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:52.973] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:52.973] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:52.973] [info] [azure_stt.cpp:76] Connecting to STT service: germanywestcentral.stt.speech.microsoft.com
+[2025-02-19 12:05:52.973] [info] [azure_stt.cpp:79] Using SSL for STT connection
+[2025-02-19 12:05:52.974] [debug] [azure_stt.cpp:95] Request Headers:
+[2025-02-19 12:05:52.974] [debug] [azure_stt.cpp:98] Content-Type: audio/wav; codecs=audio/pcm; samplerate=48000
+[2025-02-19 12:05:52.974] [debug] [azure_stt.cpp:98] Accept: application/json
+[2025-02-19 12:05:52.974] [info] [azure_stt.cpp:102] Sending STT request with 11520 bytes of audio data...
+[2025-02-19 12:05:53.000] [info] [core.cpp:65] W: {"d":{"delay":0,"speaking":1,"ssrc":69249},"op":5}
+[2025-02-19 12:05:53.156] [info] [azure_stt.cpp:111] Got STT response with status: 200
+[2025-02-19 12:05:53.157] [debug] [azure_stt.cpp:112] Response Headers:
+[2025-02-19 12:05:53.157] [debug] [azure_stt.cpp:114] Content-Length: 78
+[2025-02-19 12:05:53.157] [debug] [azure_stt.cpp:114] Strict-Transport-Security: max-age=31536000; includeSubDomains
+[2025-02-19 12:05:53.157] [debug] [azure_stt.cpp:114] Connection: close
+[2025-02-19 12:05:53.157] [debug] [azure_stt.cpp:114] Date: Wed, 19 Feb 2025 11:05:53 GMT
+[2025-02-19 12:05:53.157] [debug] [azure_stt.cpp:114] Content-Type: application/json; charset=utf-8
+[2025-02-19 12:05:53.157] [debug] [azure_stt.cpp:114] Server: Kestrel
+[2025-02-19 12:05:53.157] [info] [azure_stt.cpp:122] Successfully transcribed audio to text: 
+[2025-02-19 12:05:53.158] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:53.158] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:53.158] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:53.158] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:53.158] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:53.158] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:53.158] [debug] [voice.cpp:102] Streamed 3840 bytes of audio from user 0
+[2025-02-19 12:05:53.159] [debug] [voice.cpp:86] User 0 started speaking
+[2025-02-19 12:05:53.159] [warning] [azure_stt.cpp:146] Streaming is already active
+[2025-02-19 12:05:53.159] [info] [azure_stt.cpp:76] Connecting to STT service: germanywestcentral.stt.speech.microsoft.com
+[2025-02-19 12:05:53.159] [info] [azure_stt.cpp:79] Using SSL for STT connection
+[2025-02-19 12:05:53.159] [debug] [azure_stt.cpp:95] Request Headers:
+[2025-02-19 12:05:53.159] [debug] [azure_stt.cpp:98] Content-Type: audio/wav; codecs=audio/pcm; samplerate=48000
+[2025-02-19 12:05:53.159] [debug] [azure_stt.cpp:98] Accept: application/json
+[2025-02-19 12:05:53.159] [info] [azure_stt.cpp:102] Sending STT request with 11520 bytes of audio data...
+[2025-02-19 12:05:53.360] [info] [azure_stt.cpp:111] Got STT response with status: 200
+[2025-02-19 12:05:53.360] [debug] [azure_stt.cpp:112] Response Headers:
+[2025-02-19 12:05:53.360] [debug] [azure_stt.cpp:114] Content-Length: 78
+[2025-02-19 12:05:53.360] [debug] [azure_stt.cpp:114] Strict-Transport-Security: max-age=31536000; includeSubDomains
+[2025-02-19 12:05:53.361] [debug] [azure_stt.cpp:114] Connection: close
+[2025-02-19 12:05:53.361] [debug] [azure_stt.cpp:114] Date: Wed, 19 Feb 2025 11:05:53 GMT
+[2025-02-19 12:05:53.361] [debug] [azure_stt.cpp:114] Content[2025-02-19 12:12:37.031] [info] [main.cpp:69] Digi-Ellie starting up
+[2025-02-19 12:12:37.036] [info] [inference.cpp:33] Connected to Ollama server successfully!
+[2025-02-19 12:12:37.037] [info] [main.cpp:75] Model initialized successfully
+[2025-02-19 12:12:37.037] [info] [main.cpp:80] Discord token found, starting in Discord mode
+[2025-02-19 12:12:37.037] [info] [main.cpp:81] Starting in Discord mode...
+[2025-02-19 12:12:37.037] [info] [discord_bot.cpp:6] Creating Discord bot...
+[2025-02-19 12:12:37.037] [info] [core.cpp:10] Creating Discord bot core...
+[2025-02-19 12:12:37.038] [info] [core.cpp:16] Bot instance created with intents: 0x31fefd
+[2025-02-19 12:12:37.038] [info] [core.cpp:17] Make sure Message Content Intent is enabled in Discord Developer Portal!
+[2025-02-19 12:12:37.038] [info] [discord_bot.cpp:16] Core bot module initialized. Waiting for ready event...
+[2025-02-19 12:12:37.038] [info] [core.cpp:72] Starting Discord bot core...
+[2025-02-19 12:12:37.328] [debug] [core.cpp:63] Cluster: 992 of 1000 session starts remaining
+[2025-02-19 12:12:37.329] [info] [core.cpp:65] Auto Shard: Bot requires 1 shard
+[2025-02-19 12:12:37.329] [debug] [core.cpp:63] Starting with 1 shards...
+[2025-02-19 12:12:37.737] [debug] [core.cpp:63] Connecting new session...
+[2025-02-19 12:12:37.737] [info] [core.cpp:65] W: {"d":{"compress":false,"intents":3276541,"large_threshold":250,"properties":{"browser":"D++","device":"D++","os":"Windows"},"shard":[0,1],"token":"*****"},"op":2}
+[2025-02-19 12:12:37.927] [info] [core.cpp:65] Shard id 0 (1/1) ready!
+[2025-02-19 12:12:37.937] [debug] [core.cpp:63] Resume URL for session 581da604eb1dcb46071c27b6cf5c0acb is wss://gateway-us-east1-b.discord.gg (host: gateway-us-east1-b.discord.gg)
+[2025-02-19 12:12:37.937] [info] [core.cpp:38] === Bot Ready Event ===
+[2025-02-19 12:12:37.937] [info] [core.cpp:39] Logged in as: Digi-Ellie
+[2025-02-19 12:12:37.937] [info] [core.cpp:40] Bot ID: 1340298517784035419
+[2025-02-19 12:12:37.937] [info] [core.cpp:41] =====================
+[2025-02-19 12:12:40.414] [info] [discord_bot.cpp:20] Initializing bot modules...
+[2025-02-19 12:12:40.414] [info] [azure_stt.cpp:22] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:12:40.416] [info] [azure_stt.cpp:25] Using SSL for connection
+[2025-02-19 12:12:40.416] [info] [azure_stt.cpp:37] Requesting token...
+[2025-02-19 12:12:40.634] [info] [azure_stt.cpp:43] Got response with status: 200
+[2025-02-19 12:12:40.634] [info] [azure_stt.cpp:50] Token refreshed successfully
+[2025-02-19 12:12:40.634] [info] [voice.cpp:18] STT module initialized with Azure credentials
+[2025-02-19 12:12:40.634] [info] [azure_tts.cpp:21] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:12:40.635] [info] [azure_tts.cpp:24] Using SSL for connection
+[2025-02-19 12:12:40.635] [info] [azure_tts.cpp:36] Requesting token...
+[2025-02-19 12:12:40.773] [info] [azure_tts.cpp:43] Got response with status: 200
+[2025-02-19 12:12:40.773] [info] [azure_tts.cpp:50] Token refreshed successfully
+[2025-02-19 12:12:40.773] [info] [voice.cpp:26] TTS module initialized with Azure credentials
+[2025-02-19 12:12:40.773] [info] [commands.cpp:42] Registering 3 commands for application ID: 1340298517784035419
+[2025-02-19 12:12:40.774] [info] [discord_bot.cpp:34] Bot modules initialized successfully.
+[2025-02-19 12:12:41.311] [info] [commands.cpp:48] Successfully registered 3 slash commands.
+[2025-02-19 12:12:42.555] [debug] [core.cpp:63] Shards started.
+[2025-02-19 12:12:46.066] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:12:46.066] [info] [voice.cpp:49] Started silence detection timer
+[2025-02-19 12:12:47.071] [info] [core.cpp:65] W: {"d":{"channel_id":"829626099826819072","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:12:47.321] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:12:47.411] [info] [core.cpp[2025-02-19 12:13:49.831] [info] [main.cpp:69] Digi-Ellie starting up
+[2025-02-19 12:13:49.837] [info] [inference.cpp:33] Connected to Ollama server successfully!
+[2025-02-19 12:13:49.837] [info] [main.cpp:75] Model initialized successfully
+[2025-02-19 12:13:49.837] [info] [main.cpp:80] Discord token found, starting in Discord mode
+[2025-02-19 12:13:49.837] [info] [main.cpp:81] Starting in Discord mode...
+[2025-02-19 12:13:49.838] [info] [discord_bot.cpp:6] Creating Discord bot...
+[2025-02-19 12:13:49.838] [info] [core.cpp:10] Creating Discord bot core...
+[2025-02-19 12:13:49.838] [info] [core.cpp:16] Bot instance created with intents: 0x31fefd
+[2025-02-19 12:13:49.838] [info] [core.cpp:17] Make sure Message Content Intent is enabled in Discord Developer Portal!
+[2025-02-19 12:13:49.838] [info] [discord_bot.cpp:16] Core bot module initialized. Waiting for ready event...
+[2025-02-19 12:13:49.839] [info] [core.cpp:72] Starting Discord bot core...
+[2025-02-19 12:13:50.131] [debug] [core.cpp:63] Cluster: 991 of 1000 session starts remaining
+[2025-02-19 12:13:50.131] [info] [core.cpp:65] Auto Shard: Bot requires 1 shard
+[2025-02-19 12:13:50.131] [debug] [core.cpp:63] Starting with 1 shards...
+[2025-02-19 12:13:50.530] [debug] [core.cpp:63] Connecting new session...
+[2025-02-19 12:13:50.530] [info] [core.cpp:65] W: {"d":{"compress":false,"intents":3276541,"large_threshold":250,"properties":{"browser":"D++","device":"D++","os":"Windows"},"shard":[0,1],"token":"*****"},"op":2}
+[2025-02-19 12:13:50.684] [info] [core.cpp:65] Shard id 0 (1/1) ready!
+[2025-02-19 12:13:50.699] [debug] [core.cpp:63] Resume URL for session fe5c9c401532ab2cc6415c54f2854a91 is wss://gateway-us-east1-d.discord.gg (host: gateway-us-east1-d.discord.gg)
+[2025-02-19 12:13:50.699] [info] [core.cpp:38] === Bot Ready Event ===
+[2025-02-19 12:13:50.699] [info] [core.cpp:39] Logged in as: Digi-Ellie
+[2025-02-19 12:13:50.699] [info] [core.cpp:40] Bot ID: 1340298517784035419
+[2025-02-19 12:13:50.699] [info] [core.cpp:41] =====================
+[2025-02-19 12:13:55.341] [debug] [core.cpp:63] Shards started.
+[2025-02-19 12:14:16.594] [info] [main.cpp:69] Digi-Ellie starting up
+[2025-02-19 12:14:16.599] [info] [inference.cpp:33] Connected to Ollama server successfully!
+[2025-02-19 12:14:16.600] [info] [main.cpp:75] Model initialized successfully
+[2025-02-19 12:14:16.600] [info] [main.cpp:80] Discord token found, starting in Discord mode
+[2025-02-19 12:14:16.600] [info] [main.cpp:81] Starting in Discord mode...
+[2025-02-19 12:14:16.600] [info] [discord_bot.cpp:6] Creating Discord bot...
+[2025-02-19 12:14:16.600] [info] [core.cpp:10] Creating Discord bot core...
+[2025-02-19 12:14:16.600] [info] [core.cpp:16] Bot instance created with intents: 0x31fefd
+[2025-02-19 12:14:16.601] [info] [core.cpp:17] Make sure Message Content Intent is enabled in Discord Developer Portal!
+[2025-02-19 12:14:16.601] [info] [discord_bot.cpp:16] Core bot module initialized. Waiting for ready event...
+[2025-02-19 12:14:16.601] [info] [core.cpp:72] Starting Discord bot core...
+[2025-02-19 12:14:16.860] [debug] [core.cpp:63] Cluster: 990 of 1000 session starts remaining
+[2025-02-19 12:14:16.860] [info] [core.cpp:65] Auto Shard: Bot requires 1 shard
+[2025-02-19 12:14:16.860] [debug] [core.cpp:63] Starting with 1 shards...
+[2025-02-19 12:14:17.201] [debug] [core.cpp:63] Connecting new session...
+[2025-02-19 12:14:17.201] [info] [core.cpp:65] W: {"d":{"compress":false,"intents":3276541,"large_threshold":250,"properties":{"browser":"D++","device":"D++","os":"Windows"},"shard":[0,1],"token":"*****"},"op":2}
+[2025-02-19 12:14:17.423] [info] [core.cpp:65] Shard id 0 (1/1) ready!
+[2025-02-19 12:14:17.433] [debug] [core.cpp:63] Resume URL for session cf045e017aa5a8b003e52e5b1749c036 is wss://gateway-us-east1-c.discord.gg (host: gateway-us-east1-c.discord.gg)
+[2025-02-19 12:14:17.433] [info] [core.cpp:38] === Bot Ready Event ===
+[2025-02-19 12:14:17.433] [info] [core.cpp:39] Logged in as: Digi-Ellie
+[2025-02-19 12:14:17.433] [info] [core.cpp:40] Bot ID: 1340298517784035419
+[2025-02-19 12:14:17.433] [info] [core.cpp:41] =====================
+[2025-02-19 12:14:19.678] [info] [discord_bot.cpp:20] Initializing bot modules...
+[2025-02-19 12:14:19.679] [info] [azure_stt.cpp:22] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:14:19.681] [info] [azure_stt.cpp:25] Using SSL for connection
+[2025-02-19 12:14:19.681] [info] [azure_stt.cpp:37] Requesting token...
+[2025-02-19 12:14:19.886] [info] [azure_stt.cpp:43] Got response with status: 200
+[2025-02-19 12:14:19.886] [info] [azure_stt.cpp:50] Token refreshed successfully
+[2025-02-19 12:14:19.886] [info] [voice.cpp:18] STT module initialized with Azure credentials
+[2025-02-19 12:14:19.886] [info] [azure_tts.cpp:21] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:14:19.886] [info] [azure_tts.cpp:24] Using SSL for connection
+[2025-02-19 12:14:19.887] [info] [azure_tts.cpp:36] Requesting token...
+[2025-02-19 12:14:20.027] [info] [azure_tts.cpp:43] Got response with status: 200
+[2025-02-19 12:14:20.027] [info] [azure_tts.cpp:50] Token refreshed successfully
+[2025-02-19 12:14:20.027] [info] [voice.cpp:26] TTS module initialized with Azure credentials
+[2025-02-19 12:14:20.027] [info] [commands.cpp:42] Registering 3 commands for application ID: 1340298517784035419
+[2025-02-19 12:14:20.028] [info] [discord_bot.cpp:34] Bot modules initialized successfully.
+[2025-02-19 12:14:20.796] [info] [commands.cpp:48] Successfully registered 3 slash commands.
+[2025-02-19 12:14:22.019] [debug] [core.cpp:63] Shards started.
+[2025-02-19 12:14:23.935] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626127114960917
+[2025-02-19 12:14:24.946] [info] [core.cpp:65] W: {"d":{"channel_id":"829626127114960917","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:14:25.163] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626127114960917
+[2025-02-19 12:14:25.256] [info] [core.cpp:65] R: {"op":8,"d":{"v":8,"heartbeat_interval":13750}}
+[2025-02-19 12:14:25.256] [debug] [core.cpp:63] Connecting new voice session (DAVE: Disabled)...
+[2025-02-19 12:14:25.256] [info] [core.cpp:65] W: {"d":{"max_dave_protocol_version":0,"server_id":"829618674612305932","session_id":"cf045e017aa5a8b003e52e5b1749c036","token":"e8938c9365d9934d","user_id":"1340298517784035419"},"op":0}
+[2025-02-19 12:14:25.276] [info] [core.cpp:65] R: {"op":2,"d":{"streams":[{"type":"video","ssrc":56381,"rtx_ssrc":56382,"rid":"","quality":0,"active":false}],"ssrc":56380,"port":50010,"modes":["aead_aes256_gcm_rtpsize","aead_aes256_gcm","aead_xchacha20_poly1305_rtpsize","xsalsa20_poly1305_lite_rtpsize","xsalsa20_poly1305_lite","xsalsa20_poly1305_suffix","xsalsa20_poly1305"],"ip":"66.22.243.141","experiments":["fixed_keyframe_interval"]}}
+[2025-02-19 12:14:25.276] [debug] [core.cpp:63] Voice websocket established; UDP endpoint: 66.22.243.141:50010 [ssrc=56380] with 7 modes
+[2025-02-19 12:14:25.292] [info] [core.cpp:65] W: {"d":{"data":{"address":"89.24.228.162","mode":"aead_xchacha20_poly1305_rtpsize","port":52451},"protocol":"udp"},"op":1}
+[2025-02-19 12:14:25.292] [info] [core.cpp:65] R: {"seq":0,"op":11,"d":{"user_ids":["333647996162146304"]}}
+[2025-02-19 12:14:25.292] [debug] [core.cpp:63] New of clients in voice channel: 1 total is 1
+[2025-02-19 12:14:25.292] [info] [core.cpp:65] R: {"seq":1,"op":18,"d":{"user_id":"333647996162146304","flags":2}}
+[2025-02-19 12:14:25.293] [info] [core.cpp:65] R: {"seq":2,"op":20,"d":{"user_id":"333647996162146304","platform":0}}
+[2025-02-19 12:14:25.317] [info] [core.cpp:65] R: {"op":4,"d":{"video_codec":"H264","secure_frames_version":0,"secret_key":[125,248,196,135,181,191,6,129,42,104,67,115,240,194,105,253,160,63,129,195,133,230,242,255,201,44,6,39,237,54,142,174],"mode":"aead_xchacha20_poly1305_rtpsize","media_session_id":"41d4d012773a506267edcde375791781","dave_protocol_version":0,"audio_codec":"opus"}}
+[2025-02-19 12:14:25.317] [info] [core.cpp:65] R: {"seq":3,"op":15,"d":{"any":100}}
+[2025-02-19 12:14:26.001] [info] [core.cpp:65] W: {"d":{"delay":0,"speaking":1,"ssrc":56380},"op":5}
+[2025-02-19 12:14:27.560] [info] [core.cpp:65] R: {"seq":4,"op":13,"d":{"user_id":"333647996162146304"}}
+[2025-02-19 12:14:27.560] [debug] [core.cpp:63] User left voice channel: 333647996162146304
+[2025-02-19 12:14:30.518] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626144546488350
+[2025-02-19 12:14:31.000] [info] [core.cpp:65] W: {"d":{"channel_id":"829626144546488350","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:14:31.223] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626144546488350
+[2025-02-19 12:14:31.309] [info] [core.cpp:65] R: {"op":8,"d":{"v":8,"heartbeat_interval":13750}}
+[2025-02-19 12:14:31.309] [debug] [core.cpp:63] Connecting new voice session (DAVE: Disabled)...
+[2025-02-19 12:14:31.309] [info] [core.cpp:65] W: {"d":{"max_dave_protocol_version":0,"server_id":"829618674612305932","session_id":"cf045e017aa5a8b003e52e5b1749c036","token":"923a186dff36d611","user_id":"1340298517784035419"},"op":0}
+[2025-02-19 12:14:31.327] [info] [core.cpp:65] R: {"op":2,"d":{"streams":[{"type":"video","ssrc":66385,"rtx_ssrc":66386,"rid":"","quality":0,"active":false}],"ssrc":66384,"port":50009,"modes":["aead_aes256_gcm_rtpsize","aead_aes256_gcm","aead_xchacha20_poly1305_rtpsize","xsalsa20_poly1305_lite_rtpsize","xsalsa20_poly1305_lite","xsalsa20_poly1305_suffix","xsalsa20_poly1305"],"ip":"66.22.243.151","experiments":["fixed_keyframe_interval"]}}
+[2025-02-19 12:14:31.329] [debug] [core.cpp:63] Voice websocket established; UDP endpoint: 66.22.243.151:50009 [ssrc=66384] with 7 modes
+[2025-02-19 12:14:31.344] [info] [core.cpp:65] W: {"d":{"data":{"address":"89.24.228.162","mode":"aead_xchacha20_poly1305_rtpsize","port":50062},"protocol":"udp"},"op":1}
+[2025-02-19 12:14:31.345] [info] [core.cpp:65] R: {"seq":0,"op":11,"d":{"user_ids":["333647996162146304"]}}
+[2025-02-19 12:14:31.345] [debug] [core.cpp:63] New of clients in voice channel: 1 total is 1
+[2025-02-19 12:14:31.345] [info] [core.cpp:65] R: {"seq":1,"op":18,"d":{"user_id":"333647996162146304","flags":2}}
+[2025-02-19 12:14:31.345] [info] [core.cpp:65] R: {"seq":2,"op":20,"d":{"user_id":"333647996162146304","platform":0}}
+[2025-02-19 12:14:31.363] [info] [core.cpp:65] R: {"op":4,"d":{"video_codec":"H264","secure_frames_version":0,"secret_key":[146,144,5,85,68,84,184,85,229,5,16,142,230,74,38,248,169,211,10,21,6,220,62,5,107,82,187,189,165,249,66,3],"mode":"aead_xchacha20_poly1305_rtpsize","media_session_id":"e55145cde1d692f8c65dc57d4019b18a","dave_protocol_version":0,"audio_codec":"opus"}}
+[2025-02-19 12:14:31.363] [info] [core.cpp:65] R: {"seq":3,"op":15,"d":{"any":100}}
+[2025-02-19 12:14:32.000] [info] [core.cpp:65] W: {"d":{"delay":0,"speaking":1,"ssrc":66384},"op":5}
+[2025-02-19 12:14:33.575] [info] [core.cpp:65] R: {"seq":4,"op":13,"d":{"user_id":"333647996162146304"}}
+[2025-02-19 12:14:33.575] [debug] [core.cpp:63] User left voice channel: 333647996162146304
+[2025-02-19 12:14:36.321] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626127114960917
+[2025-02-19 12:14:37.000] [info] [core.cpp:65] W: {"d":{"channel_id":"829626127114960917","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:14:37.217] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626127114960917
+[2025-02-19 12:14:42.660] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:14:43.000] [info] [core.cpp:65] W: {"d":{"channel_id":"829626099826819072","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:14:43.218] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:14:48.000] [info] [core.cpp:65] W: {"d":26,"op":1}
