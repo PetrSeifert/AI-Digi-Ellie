@@ -11,8 +11,9 @@
 using json = nlohmann::json;
 
 AzureSTT::AzureSTT(const std::string& subscription_key, const std::string& region)
-    : subscription_key(subscription_key), region(region), token_expiry(0) {
+    : subscription_key(subscription_key), region(region), token_expiry(0), is_streaming(false) {
     refreshToken();
+    stream_buffer.reserve(STREAM_BUFFER_THRESHOLD * 2);
 }
 
 AzureSTT::~AzureSTT() {}
@@ -138,4 +139,66 @@ std::string AzureSTT::audioToText(const std::vector<uint8_t>& audio_data) {
         LOG_ERROR("STT connection error code: {}", static_cast<int>(err));
         throw std::runtime_error("Failed to connect to Azure STT: Connection error - " + std::string(httplib::to_string(err)));
     }
+}
+
+void AzureSTT::startStreaming(STTCallback callback) {
+    if (is_streaming) {
+        LOG_WARN("Streaming is already active");
+        return;
+    }
+
+    stream_callback = callback;
+    is_streaming = true;
+    stream_buffer.clear();
+    LOG_INFO("Started STT streaming");
+}
+
+void AzureSTT::stopStreaming() {
+    if (!is_streaming) {
+        return;
+    }
+
+    // Process any remaining audio in the buffer
+    if (!stream_buffer.empty()) {
+        processStreamBuffer();
+    }
+
+    is_streaming = false;
+    stream_callback = nullptr;
+    stream_buffer.clear();
+    LOG_INFO("Stopped STT streaming");
+}
+
+void AzureSTT::streamAudioChunk(const uint8_t* audio, size_t audio_size) {
+    if (!is_streaming) {
+        LOG_WARN("Attempted to stream audio chunk while streaming is not active");
+        return;
+    }
+
+    // Add audio to buffer
+    size_t current_size = stream_buffer.size();
+    stream_buffer.resize(current_size + audio_size);
+    std::memcpy(stream_buffer.data() + current_size, audio, audio_size);
+
+    // Process buffer if it exceeds threshold
+    if (stream_buffer.size() >= STREAM_BUFFER_THRESHOLD) {
+        processStreamBuffer();
+    }
+}
+
+void AzureSTT::processStreamBuffer() {
+    if (stream_buffer.empty()) {
+        return;
+    }
+
+    try {
+        std::string text = audioToText(stream_buffer);
+        if (!text.empty() && stream_callback) {
+            stream_callback(text);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR("Error processing stream buffer: {}", e.what());
+    }
+
+    stream_buffer.clear();
 } 

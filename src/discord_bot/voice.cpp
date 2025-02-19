@@ -84,17 +84,22 @@ namespace discord {
             state.is_speaking = true;
             state.current_buffer.clear();
             LOG_DEBUG("User {} started speaking", user_id);
+            
+            // Start streaming for this user if STT is available
+            if (stt) {
+                stt->startStreaming([this, user_id, guild_id = state.guild_id](const std::string& text) {
+                    if (!text.empty()) {
+                        sendVoiceMessage(user_id, text, guild_id);
+                    }
+                });
+            }
         }
 
-        // Add audio to buffer if we're recording or the user is speaking
-        if (is_recording || state.is_speaking) {
-            size_t current_size = state.current_buffer.size();
-            state.current_buffer.resize(current_size + audio_size);
-            std::memcpy(state.current_buffer.data() + current_size, audio, audio_size);
+        // Stream audio if we're recording or the user is speaking
+        if ((is_recording || state.is_speaking) && stt) {
+            stt->streamAudioChunk(audio, audio_size);
             state.last_audio_time = now;
-            
-            LOG_DEBUG("Recorded {} bytes of audio from user {} (total: {} bytes)", 
-                    audio_size, user_id, state.current_buffer.size());
+            LOG_DEBUG("Streamed {} bytes of audio from user {}", audio_size, user_id);
         }
     }
 
@@ -133,34 +138,15 @@ namespace discord {
             now - state.last_audio_time
         );
 
-        // If we've detected silence and have enough audio data
-        if (state.is_speaking && 
-            silence_duration > SILENCE_THRESHOLD && 
-            state.current_buffer.size() >= MIN_AUDIO_SIZE) {
-            
+        // If we've detected silence and the user was speaking
+        if (state.is_speaking && silence_duration > SILENCE_THRESHOLD) {
             state.is_speaking = false;
-            LOG_INFO("Detected silence for user {}, transcribing {} bytes", 
-                    user_id, state.current_buffer.size());
+            LOG_INFO("Detected silence for user {}, stopping stream", user_id);
 
-            try {
-                if (stt) {
-                    // Convert raw PCM to WAV format
-                    std::vector<uint8_t> wav_data = convertToWav(state.current_buffer);
-                    
-                    // Send to Azure STT
-                    std::string transcribed_text = stt->audioToText(wav_data);
-
-                    if (!transcribed_text.empty()) {
-                        // Send the transcribed text to Ellie
-                        sendVoiceMessage(user_id, transcribed_text, state.guild_id);
-                    }
-                    LOG_INFO("Transcription for user {}: {}", user_id, transcribed_text);
-                }
-            } catch (const std::exception& e) {
-                LOG_ERROR("Failed to transcribe audio for user {}: {}", user_id, e.what());
+            if (stt) {
+                stt->stopStreaming();
             }
-
-            // Clear the buffer after transcription
+            
             state.current_buffer.clear();
         }
     }
