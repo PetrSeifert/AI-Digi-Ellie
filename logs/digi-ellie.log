@@ -394,3 +394,71 @@
 [2025-02-19 12:14:43.000] [info] [core.cpp:65] W: {"d":{"channel_id":"829626099826819072","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
 [2025-02-19 12:14:43.218] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626099826819072
 [2025-02-19 12:14:48.000] [info] [core.cpp:65] W: {"d":26,"op":1}
+[2025-02-19 12:29:10.698] [info] [main.cpp:69] Digi-Ellie starting up
+[2025-02-19 12:29:10.703] [info] [inference.cpp:33] Connected to Ollama server successfully!
+[2025-02-19 12:29:10.704] [info] [main.cpp:75] Model initialized successfully
+[2025-02-19 12:29:10.704] [info] [main.cpp:80] Discord token found, starting in Discord mode
+[2025-02-19 12:29:10.704] [info] [main.cpp:81] Starting in Discord mode...
+[2025-02-19 12:29:10.704] [info] [discord_bot.cpp:6] Creating Discord bot...
+[2025-02-19 12:29:10.704] [info] [core.cpp:10] Creating Discord bot core...
+[2025-02-19 12:29:10.705] [info] [core.cpp:16] Bot instance created with intents: 0x31fefd
+[2025-02-19 12:29:10.705] [info] [core.cpp:17] Make sure Message Content Intent is enabled in Discord Developer Portal!
+[2025-02-19 12:29:10.705] [info] [discord_bot.cpp:16] Core bot module initialized. Waiting for ready event...
+[2025-02-19 12:29:10.705] [info] [core.cpp:72] Starting Discord bot core...
+[2025-02-19 12:29:11.003] [debug] [core.cpp:63] Cluster: 987 of 1000 session starts remaining
+[2025-02-19 12:29:11.003] [info] [core.cpp:65] Auto Shard: Bot requires 1 shard
+[2025-02-19 12:29:11.003] [debug] [core.cpp:63] Starting with 1 shards...
+[2025-02-19 12:29:11.801] [debug] [core.cpp:63] Connecting new session...
+[2025-02-19 12:29:11.801] [info] [core.cpp:65] W: {"d":{"compress":false,"intents":3276541,"large_threshold":250,"properties":{"browser":"D++","device":"D++","os":"Windows"},"shard":[0,1],"token":"*****"},"op":2}
+[2025-02-19 12:29:12.068] [info] [core.cpp:65] Shard id 0 (1/1) ready!
+[2025-02-19 12:29:12.078] [debug] [core.cpp:63] Resume URL for session 9bd20a48dc9d8be2b9d6e9d232251fda is wss://gateway-us-east1-d.discord.gg (host: gateway-us-east1-d.discord.gg)
+[2025-02-19 12:29:12.078] [info] [core.cpp:38] === Bot Ready Event ===
+[2025-02-19 12:29:12.078] [info] [core.cpp:39] Logged in as: Digi-Ellie
+[2025-02-19 12:29:12.078] [info] [core.cpp:40] Bot ID: 1340298517784035419
+[2025-02-19 12:29:12.078] [info] [core.cpp:41] =====================
+[2025-02-19 12:29:13.976] [info] [discord_bot.cpp:20] Initializing bot modules...
+[2025-02-19 12:29:13.976] [info] [azure_stt.cpp:22] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:29:13.979] [info] [azure_stt.cpp:25] Using SSL for connection
+[2025-02-19 12:29:13.979] [info] [azure_stt.cpp:37] Requesting token...
+[2025-02-19 12:29:14.168] [info] [azure_stt.cpp:43] Got response with status: 200
+[2025-02-19 12:29:14.168] [info] [azure_stt.cpp:50] Token refreshed successfully
+[2025-02-19 12:29:14.168] [info] [voice.cpp:18] STT module initialized with Azure credentials
+[2025-02-19 12:29:14.168] [info] [azure_tts.cpp:21] Connecting to: germanywestcentral.api.cognitive.microsoft.com
+[2025-02-19 12:29:14.169] [info] [azure_tts.cpp:24] Using SSL for connection
+[2025-02-19 12:29:14.169] [info] [azure_tts.cpp:36] Requesting token...
+[2025-02-19 12:29:14.309] [info] [azure_tts.cpp:43] Got response with status: 200
+[2025-02-19 12:29:14.309] [info] [azure_tts.cpp:50] Token refreshed successfully
+[2025-02-19 12:29:14.309] [info] [voice.cpp:26] TTS module initialized with Azure credentials
+[2025-02-19 12:29:14.309] [info] [commands.cpp:42] Registering 3 commands for application ID: 1340298517784035419
+[2025-02-19 12:29:14.310] [info] [discord_bot.cpp:34] Bot modules initialized successfully.
+[2025-02-19 12:29:14.748] [info] [commands.cpp:48] Successfully registered 3 slash commands.
+[2025-02-19 12:29:16.616] [debug] [core.cpp:63] Shards started.
+[2025-02-19 12:29:23.758] [debug] [core.cpp:63] Sending op 4 to join VC, guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:29:24.772] [info] [core.cpp:65] W: {"d":{"channel_id":"829626099826819072","guild_id":"829618674612305932","self_deaf":false,"self_mute":false},"op":4}
+[2025-02-19 12:29:25.001] [debug] [core.cpp:63] Connecting voice for guild 829618674612305932 channel 829626099826819072
+[2025-02-19 12:29:25.095] [info] [core.cpp:65] R: {"op":8,"d":{"v":8,"heartbeat_interval":13750}}
+[2025-02-19 12:29:25.095] [debug] [core.cpp:63] Connecting new voice session (DAVE: Disabled)...
+[2025-02-19 12:29:25.095] [info] [core.cpp:65] W: {"d":{"max_dave_protocol_version":0,"server_id":"829618674612305932","session_id":"9bd20a48dc9d8be2b9d6e9d232251fda","token":"102cbdfb603ec0cd","user_id":"1340298517784035419"},"op":0}
+[2025-02-19 12:29:25.127] [info] [core.cpp:65] R: {"op":2,"d":{"streams":[{"type":"video","ssrc":66608,"rtx_ssrc":66609,"rid":"","quality":0,"active":false}],"ssrc":66607,"port":50003,"modes":["aead_aes256_gcm_rtpsize","aead_aes256_gcm","aead_xchacha20_poly1305_rtpsize","xsalsa20_poly1305_lite_rtpsize","xsalsa20_poly1305_lite","xsalsa20_poly1305_suffix","xsalsa20_poly1305"],"ip":"66.22.243.20","experiments":["fixed_keyframe_interval"]}}
+[2025-02-19 12:29:25.128] [debug] [core.cpp:63] Voice websocket established; UDP endpoint: 66.22.243.20:50003 [ssrc=66607] with 7 modes
+[2025-02-19 12:29:25.144] [info] [core.cpp:65] W: {"d":{"data":{"address":"89.24.228.162","mode":"aead_xchacha20_poly1305_rtpsize","port":56359},"protocol":"udp"},"op":1}
+[2025-02-19 12:29:25.144] [info] [core.cpp:65] R: {"seq":0,"op":11,"d":{"user_ids":["333647996162146304"]}}
+[2025-02-19 12:29:25.144] [debug] [core.cpp:63] New of clients in voice channel: 1 total is 1
+[2025-02-19 12:29:25.144] [info] [core.cpp:65] R: {"seq":1,"op":5,"d":{"user_id":"333647996162146304","ssrc":66467,"speaking":1}}
+[2025-02-19 12:29:25.144] [info] [core.cpp:65] R: {"seq":2,"op":18,"d":{"user_id":"333647996162146304","flags":2}}
+[2025-02-19 12:29:25.144] [info] [core.cpp:65] R: {"seq":3,"op":20,"d":{"user_id":"333647996162146304","platform":0}}
+[2025-02-19 12:29:25.163] [info] [core.cpp:65] R: {"op":4,"d":{"video_codec":"H264","secure_frames_version":0,"secret_key":[189,49,79,17,32,120,24,168,107,26,221,43,150,87,192,239,107,156,37,215,135,55,189,155,252,107,13,72,117,173,229,146],"mode":"aead_xchacha20_poly1305_rtpsize","media_session_id":"ca115160ff3645bde2c805748b91fbbb","dave_protocol_version":0,"audio_codec":"opus"}}
+[2025-02-19 12:29:25.163] [info] [core.cpp:65] R: {"seq":4,"op":15,"d":{"any":100}}
+[2025-02-19 12:29:26.000] [info] [core.cpp:65] W: {"d":{"delay":0,"speaking":1,"ssrc":66607},"op":5}
+[2025-02-19 12:29:37.000] [info] [core.cpp:65] W: {"d":{"seq_ack":4,"t":41},"op":3}
+[2025-02-19 12:29:37.024] [info] [core.cpp:65] R: {"op":6,"d":{"t":41}}
+[2025-02-19 12:29:43.000] [info] [core.cpp:65] W: {"d":7,"op":1}
+[2025-02-19 12:29:48.000] [info] [core.cpp:65] W: {"d":{"seq_ack":4,"t":18467},"op":3}
+[2025-02-19 12:29:48.018] [info] [core.cpp:65] R: {"op":6,"d":{"t":18467}}
+[2025-02-19 12:29:59.000] [info] [core.cpp:65] W: {"d":{"seq_ack":4,"t":6334},"op":3}
+[2025-02-19 12:29:59.027] [info] [core.cpp:65] R: {"op":6,"d":{"t":6334}}
+[2025-02-19 12:30:10.000] [info] [core.cpp:65] W: {"d":{"seq_ack":4,"t":26500},"op":3}
+[2025-02-19 12:30:10.026] [info] [core.cpp:65] R: {"op":6,"d":{"t":26500}}
+[2025-02-19 12:30:14.000] [info] [core.cpp:65] W: {"d":7,"op":1}
+[2025-02-19 12:30:21.000] [info] [core.cpp:65] W: {"d":{"seq_ack":4,"t":19169},"op":3}
+[2025-02-19 12:30:21.019] [info] [core.cpp:65] R: {"op":6,"d":{"t":19169}}

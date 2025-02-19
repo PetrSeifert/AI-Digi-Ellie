@@ -6,6 +6,8 @@
 #include <thread>
 #include <chrono>
 
+#define HAVE_VOICE
+
 namespace discord {
 
     VoiceModule::VoiceModule(std::shared_ptr<CoreBot> core, std::shared_ptr<CommandsModule> commands) 
@@ -210,23 +212,6 @@ namespace discord {
             return;
         }
 
-        /*voice_connected = true;
-        
-        // Initialize states for all users in the voice channel
-        {
-            std::lock_guard<std::mutex> lock(audio_states_mutex);
-            user_audio_states.clear();
-            for (const auto& [user_id, state] : g->voice_members) {
-                UserAudioState audio_state;
-                audio_state.current_buffer.reserve(1024 * 1024); // Reserve 1MB initially
-                audio_state.is_speaking = false;
-                audio_state.last_audio_time = std::chrono::steady_clock::now();
-                audio_state.guild_id = guild_id;
-                user_audio_states[user_id] = std::move(audio_state);
-            }
-        }
-        
-        startSilenceDetectionTimer();*/
         event.reply("Joined your voice channel! I will now transcribe speech automatically when there are pauses in conversation.");
     }
 
