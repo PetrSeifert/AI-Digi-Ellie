@@ -50,4 +50,11 @@ namespace config {
     const std::string AZURE_SPEECH_KEY = getEnvVar("DIGI_ELLIE_AZURE_SPEECH_KEY");
     const std::string AZURE_SPEECH_REGION = getEnvVar("DIGI_ELLIE_AZURE_SPEECH_REGION", "germanywestcentral");
     const std::string AZURE_SPEECH_VOICE = getEnvVar("DIGI_ELLIE_AZURE_SPEECH_VOICE", "en-US-JennyNeural");
+
+    // Whisper STT Configuration
+    const std::string WHISPER_MODEL_NAME = getEnvVar("DIGI_ELLIE_WHISPER_MODEL_NAME", "ggml-large-v3-turbo-q8_0.bin");
+    
+    // Whisper Service Configuration
+    const std::string WHISPER_SERVICE_HOST = getEnvVar("DIGI_ELLIE_WHISPER_SERVICE_HOST", "0.0.0.0");
+    const uint64_t WHISPER_SERVICE_PORT = getEnvVarUInt64("DIGI_ELLIE_WHISPER_SERVICE_PORT", 8000);
 } 

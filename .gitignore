@@ -13,4 +13,6 @@ CMakeUserPresets.json
 
 .vscode
 build
+logs
+whisper_models
 vendor/libtorch

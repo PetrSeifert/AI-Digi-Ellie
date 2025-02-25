@@ -6,7 +6,6 @@
 #include "config.hpp"
 #include "inference.hpp"
 #include "conversation.hpp"
-#include "system_control.hpp"
 #include "discord_bot.hpp"
 #include "logging.hpp"
 
@@ -52,14 +51,9 @@ void runConsoleMode() {
         LOG_DEBUG("Processing user input: {}", userInput);
         std::string prompt = buildPrompt(userInput, userName);
         std::string ellieResponse = runInference(prompt);
-
-        if (isSystemCommand(ellieResponse)) {
-            LOG_INFO("Handling system command: {}", ellieResponse);
-            handleSystemCommand(ellieResponse);
-        } else {
-            LOG_DEBUG("Ellie's response: {}", ellieResponse);
-            LOG_INFO("Ellie: {}", ellieResponse);
-        }
+        
+        LOG_DEBUG("Ellie's response: {}", ellieResponse);
+        LOG_INFO("Ellie: {}", ellieResponse);
     }
 }
 

@@ -20,6 +20,7 @@ static const int OLLAMA_PORT = 11434;
 
 bool initializeModel() {
     try {
+        LOG_INFO("Initializing model: {}", config::MODEL_NAME);
         g_client = std::make_unique<httplib::Client>(config::OLLAMA_HOST, OLLAMA_PORT);
         
         // Test connection and check if model exists

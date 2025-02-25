@@ -12,12 +12,19 @@ namespace discord {
         : core(core), commands(commands), voice_connected(false), is_recording(false),
           should_stop_silence_detection(true) {
         
-        // Initialize Azure STT if key is provided
-        if (!config::AZURE_SPEECH_KEY.empty()) {
-            stt = std::make_unique<AzureSTT>(config::AZURE_SPEECH_KEY, config::AZURE_SPEECH_REGION);
-            LOG_INFO("STT module initialized with Azure credentials");
-        } else {
-            LOG_WARN("STT module initialized without Azure credentials - STT functionality will be disabled");
+        // Initialize Whisper client
+        try {
+            std::string service_url = std::string("http://") + config::WHISPER_SERVICE_HOST + ":" + std::to_string(config::WHISPER_SERVICE_PORT);
+            stt = std::make_unique<WhisperClient>(service_url, 5000);  // 5 second delay between reconnection attempts
+            
+            if (stt->isHealthy()) {
+                LOG_INFO("STT module initialized and connected to Whisper service");
+            } else {
+                LOG_WARN("Whisper service is not healthy, background reconnection task started");
+            }
+        } catch (const std::exception& e) {
+            LOG_ERROR("Failed to initialize Whisper client: {}", e.what());
+            LOG_WARN("STT functionality will be disabled");
         }
 
         // Initialize Azure TTS if key is provided
@@ -144,11 +151,16 @@ namespace discord {
 
             try {
                 if (stt) {
-                    // Convert raw PCM to WAV format
-                    std::vector<uint8_t> wav_data = convertToWav(state.current_buffer);
-                    
-                    // Send to Azure STT
-                    std::string transcribed_text = stt->audioToText(wav_data);
+                    // Send to Whisper service
+                    std::string transcribed_text;
+                    try {
+                        transcribed_text = stt->audioToText(state.current_buffer);
+                    } catch (const std::exception& e) {
+                        LOG_ERROR("Error during transcription: {}", e.what());
+                        LOG_INFO("Whisper service unavailable, transcription will be retried when service is back online");
+                        // No need to manually reconnect, the background task is handling it
+                        throw;  // Re-throw to be caught by outer catch block
+                    }
 
                     if (!transcribed_text.empty()) {
                         // Send the transcribed text to Ellie

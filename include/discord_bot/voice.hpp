@@ -2,7 +2,7 @@
 
 #include "core.hpp"
 #include "commands.hpp"
-#include "azure_stt.hpp"
+#include "whisper_client.hpp"
 #include "azure_tts.hpp"
 #include <dpp/dpp.h>
 #include <vector>
@@ -48,7 +48,7 @@ namespace discord {
 
         std::shared_ptr<CoreBot> core;
         std::shared_ptr<CommandsModule> commands;
-        std::unique_ptr<AzureSTT> stt;
+        std::unique_ptr<WhisperClient> stt;
         std::unique_ptr<AzureTTS> tts;
         bool voice_connected;
         bool is_recording;
