@@ -1,6 +1,10 @@
 #include "whisper_stt.hpp"
 #include "logging.hpp"
+#include "audio_utils.hpp"
 #include <stdexcept>
+#include <iostream>
+#include <thread>
+#include <chrono>
 
 WhisperSTT::WhisperSTT(const std::string& model_path) {
     // Initialize whisper context with default parameters
@@ -32,16 +36,14 @@ WhisperSTT::~WhisperSTT() {
 }
 
 std::vector<float> WhisperSTT::convertPCMToFloat(const std::vector<uint8_t>& audio_data) {
-    // Convert 16-bit PCM to float
+    // Convert 16-bit PCM to float (assumes mono already)
     const int16_t* pcm = reinterpret_cast<const int16_t*>(audio_data.data());
-    size_t n_samples = audio_data.size() / sizeof(int16_t);
+    size_t num_samples = audio_data.size() / sizeof(int16_t);
     
-    std::vector<float> samples(n_samples);
-    for (size_t i = 0; i < n_samples; i++) {
-        // Convert to float and normalize to [-1, 1]
+    std::vector<float> samples(num_samples);
+    for (size_t i = 0; i < num_samples; i++) {
         samples[i] = static_cast<float>(pcm[i]) / 32768.0f;
     }
-    
     return samples;
 }
 
@@ -51,8 +53,39 @@ std::string WhisperSTT::audioToText(const std::vector<uint8_t>& audio_data) {
         return "";
     }
     
-    // Convert PCM to float samples
-    std::vector<float> samples = convertPCMToFloat(audio_data);
+    // Save the original 48kHz stereo PCM audio data to a WAV file
+    std::string original_file = "original_audio_48khz_stereo.wav";
+    LOG_INFO("Saving original 48kHz stereo PCM audio data to WAV file: {}", original_file);
+    audio_utils::savePCMToWav(original_file, audio_data, 48000, 2);
+    
+    // Convert stereo to mono
+    LOG_INFO("Converting stereo audio to mono");
+    std::vector<uint8_t> mono_audio = audio_utils::stereoToMono(audio_data);
+    
+    // Save the mono 48kHz PCM audio data to a WAV file
+    std::string mono_file = "mono_audio_48khz.wav";
+    LOG_INFO("Saving mono 48kHz PCM audio data to WAV file: {}", mono_file);
+    audio_utils::savePCMToWav(mono_file, mono_audio, 48000, 1);
+    
+    // Downsample from 48kHz to 16kHz
+    LOG_INFO("Downsampling mono audio from 48kHz to 16kHz");
+    std::vector<uint8_t> downsampled_audio = audio_utils::downsamplePCM(mono_audio, 48000, 16000);
+    
+    // Save the downsampled 16kHz mono PCM audio data to a WAV file
+    std::string downsampled_file = "downsampled_audio_16khz_mono.wav";
+    LOG_INFO("Saving downsampled 16kHz mono PCM audio data to WAV file: {}", downsampled_file);
+    audio_utils::savePCMToWav(downsampled_file, downsampled_audio, 16000, 1);
+    
+    // Convert downsampled PCM to float samples
+    std::vector<float> samples = convertPCMToFloat(downsampled_audio);
+    
+    // Save the converted float samples to a WAV file
+    std::string converted_file = "converted_audio_16khz_mono.wav";
+    LOG_INFO("Saving converted float samples to WAV file: {}", converted_file);
+    audio_utils::saveFloatToWav(converted_file, samples, 16000, 1);
+    
+    LOG_INFO("Created audio files for comparison: {}, {}, {}, and {}", 
+             original_file, mono_file, downsampled_file, converted_file);
     
     // Set up parameters for full processing
     struct whisper_full_params params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
@@ -92,4 +125,4 @@ std::string WhisperSTT::audioToText(const std::vector<uint8_t>& audio_data) {
     
     LOG_INFO("Whisper transcription complete: {} segments, {} characters", n_segments, result.length());
     return result;
-} 
+}

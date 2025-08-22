@@ -18,6 +18,15 @@ public:
     // Convert audio data to text using the remote service
     std::string audioToText(const std::vector<uint8_t>& audio_data);
 
+    // Streaming API
+    // Start a new streaming session, returns session id
+    std::string startStream();
+    // Append a chunk of raw PCM data to an existing stream session
+    // Returns partial text when available (may be empty)
+    std::string appendStream(const std::string& session_id, const std::vector<uint8_t>& audio_chunk);
+    // Finish the stream and get the transcription
+    std::string finishStream(const std::string& session_id);
+
     // Check if the service is available
     bool isHealthy();
     

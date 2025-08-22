@@ -71,6 +71,7 @@ set(WHISPER_SERVICE_SOURCES
     src/whisper_service_main.cpp
     src/whisper_service.cpp
     src/whisper_stt.cpp
+    src/audio_utils.cpp
 )
 
 # Main bot executable

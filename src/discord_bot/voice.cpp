@@ -50,6 +50,50 @@ namespace discord {
         stopSilenceDetectionTimer();
     }
 
+    void VoiceModule::mergePartialTranscript(StreamSessionState& state, const std::string& partial_text) {
+        if (partial_text.empty()) return;
+
+        // If new partial starts with last_partial, skip duplicate prefix
+        std::string new_text = partial_text;
+        if (!state.last_partial.empty()) {
+            // Find the longest common prefix
+            size_t prefix = 0;
+            size_t max_len = std::min(state.last_partial.size(), new_text.size());
+            while (prefix < max_len && state.last_partial[prefix] == new_text[prefix]) {
+                ++prefix;
+            }
+            new_text = new_text.substr(prefix);
+        }
+
+        // If there is a pending fragment and new_text continues it without a leading space, try to glue smartly
+        if (!state.pending_fragment.empty() && !new_text.empty()) {
+            if (state.pending_fragment.back() != ' ' && new_text.front() != ' ') {
+                state.pending_fragment += new_text;
+            } else {
+                state.pending_fragment += new_text;
+            }
+        } else if (!new_text.empty()) {
+            state.pending_fragment += new_text;
+        }
+
+        // If we have sentence-ending punctuation, commit up to last terminator
+        size_t last_term = state.pending_fragment.find_last_of(".!?\n");
+        if (last_term != std::string::npos) {
+            std::string to_commit = state.pending_fragment.substr(0, last_term + 1);
+            if (!to_commit.empty()) {
+                if (!state.committed_text.empty()) state.committed_text += " ";
+                state.committed_text += to_commit;
+            }
+            state.pending_fragment.erase(0, last_term + 1);
+            // Trim leading spaces in pending fragment
+            while (!state.pending_fragment.empty() && state.pending_fragment.front() == ' ') {
+                state.pending_fragment.erase(state.pending_fragment.begin());
+            }
+        }
+
+        state.last_partial = partial_text;
+    }
+
     void VoiceModule::startSilenceDetectionTimer() {
         should_stop_silence_detection = false;
         silence_detection_thread = std::thread(&VoiceModule::silenceDetectionLoop, this);
@@ -91,6 +135,25 @@ namespace discord {
             state.is_speaking = true;
             state.current_buffer.clear();
             LOG_DEBUG("User {} started speaking", user_id);
+
+            // Start streaming session for this user
+            try {
+                if (stt) {
+                    std::string sid = stt->startStream();
+                    if (!sid.empty()) {
+                        user_stream_session_ids[user_id] = sid;
+                        LOG_DEBUG("Started stream session {} for user {}", sid, user_id);
+                        // Reset stream accumulator
+                        auto& sstate = stream_states[user_id];
+                        sstate.accumulator.clear();
+                        sstate.committed_text.clear();
+                        sstate.pending_fragment.clear();
+                        sstate.last_partial.clear();
+                    }
+                }
+            } catch (const std::exception& e) {
+                LOG_ERROR("Failed to start stream for user {}: {}", user_id, e.what());
+            }
         }
 
         // Add audio to buffer if we're recording or the user is speaking
@@ -102,6 +165,25 @@ namespace discord {
             
             LOG_DEBUG("Recorded {} bytes of audio from user {} (total: {} bytes)", 
                     audio_size, user_id, state.current_buffer.size());
+
+            // Append chunk to streaming session if available
+            auto it = user_stream_session_ids.find(user_id);
+            if (it != user_stream_session_ids.end() && stt) {
+                auto& sstate = stream_states[user_id];
+                // Accumulate and only send when we have at least ~1s of audio
+                size_t prev_size = sstate.accumulator.size();
+                sstate.accumulator.resize(prev_size + audio_size);
+                std::memcpy(sstate.accumulator.data() + prev_size, audio, audio_size);
+
+                if (sstate.accumulator.size() >= MIN_STREAM_SEND_BYTES) {
+                    std::string partial = stt->appendStream(it->second, sstate.accumulator);
+                    sstate.accumulator.clear();
+                    if (!partial.empty()) {
+                        mergePartialTranscript(sstate, partial);
+                        LOG_DEBUG("User {} partial (committed='{}', pending='{}')", user_id, sstate.committed_text, sstate.pending_fragment);
+                    }
+                }
+            }
         }
     }
 
@@ -151,22 +233,52 @@ namespace discord {
 
             try {
                 if (stt) {
-                    // Send to Whisper service
-                    std::string transcribed_text;
-                    try {
-                        transcribed_text = stt->audioToText(state.current_buffer);
-                    } catch (const std::exception& e) {
-                        LOG_ERROR("Error during transcription: {}", e.what());
-                        LOG_INFO("Whisper service unavailable, transcription will be retried when service is back online");
-                        // No need to manually reconnect, the background task is handling it
-                        throw;  // Re-throw to be caught by outer catch block
+                    // Finish streaming session and transcribe
+                    std::string sid;
+                    auto it = user_stream_session_ids.find(user_id);
+                    if (it != user_stream_session_ids.end()) {
+                        sid = it->second;
+                        user_stream_session_ids.erase(it);
                     }
 
-                    if (!transcribed_text.empty()) {
-                        // Send the transcribed text to Ellie
-                        sendVoiceMessage(user_id, transcribed_text, state.guild_id);
+                    std::string transcribed_text;
+                    if (!sid.empty()) {
+                        // Flush any remaining accumulator before finish to improve finalization
+                        auto sstate_it = stream_states.find(user_id);
+                        if (sstate_it != stream_states.end() && !sstate_it->second.accumulator.empty()) {
+                            std::string partial = stt->appendStream(sid, sstate_it->second.accumulator);
+                            sstate_it->second.accumulator.clear();
+                            if (!partial.empty()) {
+                                mergePartialTranscript(sstate_it->second, partial);
+                            }
+                        }
+                        transcribed_text = stt->finishStream(sid);
+                    } else {
+                        // Fallback: non-streaming call if no session
+                        transcribed_text = stt->audioToText(state.current_buffer);
                     }
-                    LOG_INFO("Transcription for user {}: {}", user_id, transcribed_text);
+
+                    // Build final message from committed + pending + final tail
+                    auto sstate_it = stream_states.find(user_id);
+                    std::string final_text = transcribed_text;
+                    if (sstate_it != stream_states.end()) {
+                        final_text = sstate_it->second.committed_text;
+                        if (!sstate_it->second.pending_fragment.empty()) {
+                            if (!final_text.empty()) final_text += " ";
+                            final_text += sstate_it->second.pending_fragment;
+                        }
+                        if (!transcribed_text.empty()) {
+                            if (!final_text.empty()) final_text += " ";
+                            final_text += transcribed_text;
+                        }
+                        // Clear state for next session
+                        stream_states.erase(sstate_it);
+                    }
+
+                    if (!final_text.empty()) {
+                        sendVoiceMessage(user_id, final_text, state.guild_id);
+                    }
+                    LOG_INFO("Transcription for user {}: {}", user_id, final_text);
                 }
             } catch (const std::exception& e) {
                 LOG_ERROR("Failed to transcribe audio for user {}: {}", user_id, e.what());

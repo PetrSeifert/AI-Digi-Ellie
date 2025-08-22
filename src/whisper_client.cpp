@@ -144,6 +144,70 @@ std::string WhisperClient::audioToText(const std::vector<uint8_t>& audio_data) {
     return transcribed_text;
 }
 
+std::string WhisperClient::startStream() {
+    if (!isHealthy()) {
+        if (!is_reconnecting) {
+            startReconnectionTask();
+        }
+        throw std::runtime_error("Whisper service is unavailable, reconnection task started");
+    }
+
+    httplib::Headers headers = {
+        {"Content-Type", "application/json"}
+    };
+
+    json payload = {};
+
+    std::lock_guard<std::mutex> lock(client_mutex);
+    auto result = client->Post("/stream/start", headers, payload.dump(), "application/json");
+    if (!result) {
+        auto err = result.error();
+        throw std::runtime_error("Failed to start stream: " + httplib::to_string(err));
+    }
+    if (result->status != 200) {
+        auto response = json::parse(result->body);
+        throw std::runtime_error("Start stream error: " + response.value("error", std::string("HTTP ") + std::to_string(result->status)));
+    }
+    auto response = json::parse(result->body);
+    return response.value("session_id", "");
+}
+
+std::string WhisperClient::appendStream(const std::string& session_id, const std::vector<uint8_t>& audio_chunk) {
+    if (session_id.empty() || audio_chunk.empty()) return "";
+    if (!isHealthy()) return "";
+
+    httplib::Headers headers = {
+        {"X-Session-Id", session_id},
+        {"Content-Type", "audio/raw"}
+    };
+
+    std::lock_guard<std::mutex> lock(client_mutex);
+    auto result = client->Post("/stream/chunk", headers, std::string(audio_chunk.begin(), audio_chunk.end()), "audio/raw");
+    if (!result || result->status != 200) return "";
+    try {
+        auto response = json::parse(result->body);
+        return response.value("partial", "");
+    } catch (...) {
+        return "";
+    }
+}
+
+std::string WhisperClient::finishStream(const std::string& session_id) {
+    if (session_id.empty()) return "";
+    if (!isHealthy()) return "";
+
+    httplib::Headers headers = {
+        {"Content-Type", "application/json"}
+    };
+    json payload = { {"session_id", session_id} };
+
+    std::lock_guard<std::mutex> lock(client_mutex);
+    auto result = client->Post("/stream/finish", headers, payload.dump(), "application/json");
+    if (!result || result->status != 200) return "";
+    auto response = json::parse(result->body);
+    return response.value("text", "");
+}
+
 bool WhisperClient::isHealthy() {
     std::lock_guard<std::mutex> lock(client_mutex);
     auto result = client->Get("/health");

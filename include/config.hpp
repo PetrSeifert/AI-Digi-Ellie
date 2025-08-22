@@ -40,7 +40,7 @@ namespace config {
     const std::string MODEL_NAME = getEnvVar("DIGI_ELLIE_MODEL_NAME", "mistral");
     
     // The host of the Ollama server
-    const std::string OLLAMA_HOST = getEnvVar("DIGI_ELLIE_OLLAMA_HOST", "localhost");
+    const std::string LLM_HOST = getEnvVar("DIGI_ELLIE_OLLAMA_HOST", "localhost");
 
     // The Discord channel ID where the bot will send boot messages
     const uint64_t DEFAULT_CHANNEL_ID = getEnvVarUInt64("DIGI_ELLIE_DEFAULT_CHANNEL_ID", 0);

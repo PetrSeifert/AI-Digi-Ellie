@@ -5,6 +5,8 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <unordered_map>
+#include <mutex>
 
 class WhisperService {
 public:
@@ -23,4 +25,11 @@ private:
 
     void setupRoutes();
     std::string handleTranscription(const std::vector<uint8_t>& audio_data);
+
+    // In-memory stream sessions: store accumulated raw bytes per session
+    std::mutex sessions_mutex;
+    std::unordered_map<std::string, std::vector<uint8_t>> sessions;
+
+    // Serialize whisper usage across requests for safety
+    std::mutex whisper_mutex;
 }; 
